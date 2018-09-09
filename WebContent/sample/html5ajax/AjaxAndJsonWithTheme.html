@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajax And JSON</title>
+<!-- 注意css文件与js文件的引用顺序，被依赖的放在前面！ -->
+<link rel="stylesheet" href="../../theme/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../theme/css/sb-admin.css">
+<link rel="stylesheet" href="../../theme/font-awesome/css/font-awesome.min.css" type="text/css">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+<link rel="stylesheet" type="text/css" href="../../theme/jquery-ui/jquery-ui.theme.css">
+<link rel="stylesheet" type="text/css" href="../../theme/jquery-ui/jquery-ui.structure.css">
+<link rel="stylesheet" type="text/css" href="../../theme/jquery-ui/jquery.datetimepicker.css">
+<script src="../../theme/js/jquery.js"></script>
+<script src="../../theme/js/bootstrap.min.js"></script>
+<script src="../../theme/jquery-ui/jquery-ui.js"></script>
+<script src="../../theme/jquery-ui/jquery.datetimepicker.js"></script>
+<script>
+	var pageNo = 0;
+	var pageSize = 5;
+	function clearErrors() {
+		$('label[id$="Error"]').text('');
+		$('#exeErrors').text('');
+		$('#exeErrors').hide();
+	}
+	function ok() {
+		clearErrors();
+		var user = getUserFromDialog();
+		console.log(user);
+		$.ajax({
+			type : 'post',
+			traditional : true,
+			url : 'AjaxAndJsonAddOrChgUser',
+			data : user,
+			success : function(data) {
+				console.log(data);
+				if (data.status === 'success') {
+					$('#userDialog').modal('hide');
+					loadTable({
+						pageNo : pageNo,
+						pageSize : pageSize
+					});
+				} else {
+					for (key in data.paramErrors) {
+						$('#' + key + 'Error').text(data.paramErrors[key][0]);
+					}
+					if (data.exeErrors.length > 0)
+						$('#exeErrors').show();
+					for (i in data.exeErrors) {
+						$('#exeErrors').append(data.exeErrors[i]).append('<br/>');
+					}
+				}
+			},
+			error : function(xhr, msg, e) {
+
+			}
+		});
+	}
+
+	function addUser() {
+		clearErrors();
+		$('input[type="text"]').val('');
+		$("input[type='checkbox']").prop('checked', false);
+		$('#userDialogLabel').text("添加用户");
+		$('input[type="hidden"][name="id"]').val('');
+		$('#userDialog').modal('show');
+	}
+	function chgUser(o) {
+		clearErrors();
+		$('#userDialogLabel').text("修改用户");
+		$('#userDialog').modal('show');
+		writeUserFromTrToDialog($(o).parents('tr'));
+	}
+	function delUser(o) {
+		var id = $(o).parents('tr').prop('id');
+		console.log(id);
+		$.post('AjaxAndJsonDelUser', {
+			id : id
+		}, function success(data, textStatus, jqXHR) {
+			if (data.status === 'success') {
+				loadTable({
+					pageNo : pageNo,
+					pageSize : pageSize
+				});
+			}
+		});
+
+	}
+	function writeUserFromTrToDialog(tr) {
+		var cols = tr.children('td');
+		$('input[type="hidden"][name="id"]').val(tr.prop("id"));
+		console.log($('input[type="hidden"][name="id"]').val());
+		$('#account').val(cols.eq(0).text());
+		$('#passwd').val(cols.eq(1).text());
+		$('#confirmPasswd').val('');
+		$('input:radio[name="sex"]').each(function(i, element) {
+			if ($(element).val() === cols.eq(2).text()) {
+				$(element).prop("checked", true);
+			}
+		});
+		$('#birthday').val(cols.eq(3).text());
+		$('#salary').val(cols.eq(4).text());
+		$.each($('input:checkbox[name="hobbies"]'), function(i, element) {
+			$(element).prop('checked', false);
+			if (cols.eq(5).text().indexOf($(element).val()) != -1) {
+				$(element).prop('checked', true);
+			}
+		});
+	}
+	function nullToSpace(v) {
+		if (v)
+			return v;
+		else
+			return '';
+	}
+	function getUserFromDialog() {
+		var v = new Object();
+		v.id = $('input[type="hidden"][name="id"]').val();
+		v.arrayFields = $('input[type="hidden"][name="arrayFields"]').val();
+		v.account = $('#account').val();
+		v.passwd = $('#passwd').val();
+		v.confirmPasswd = $('#confirmPasswd').val();
+		v.sex = $('input:radio[name="sex"]:checked').val();
+		v.birthday = $('#birthday').val();
+		v.salary = $('#salary').val();
+		v.hobbies = new Array();
+		$.each($('input:checkbox:checked'), function(i) {
+			v.hobbies[i] = $(this).val();
+		});
+		return v;
+	}
+
+	function loadTable(params) {
+		$.post("AjaxAndJsonListUser", params, function(data, status) {
+			if (status === 'success') {
+				if (data.pageCount > 0)
+					$('#labelPageNo').text((data.pageNo + 1) + '/' + data.pageCount);
+				else
+					$('#labelPageNo').text('无记录');
+				var tbody = $('#userTable tbody');
+				tbody.empty();
+				pageNo = data.pageNo;
+				for (var i = 0; i < data.datas.length; i++) {
+					var user = data.datas[i];
+					var tr = $('<tr id="'+user.id+'">' + '<td>' + user.account + '</td>' + '<td>' + user.passwd + '</td>' + '<td>' + user.sex + '</td>' + '<td>' + nullToSpace(user.birthday) + '</td>'
+							+ '<td>' + nullToSpace(user.salary) + '</td>' + '<td>' + user.hobbies + '</td><td class="text-center"></td>' + '</tr>');
+					var chgBtn = $('<button id="chg" type="button" onclick="chgUser(this)" class="btn btn-primary btn-xs">修改</button>');
+					var delBtn = $('<button id="del" type="button" onclick="delUser(this)" class="btn btn-primary btn-xs">删除</button>');
+					tr.children().last().append(chgBtn).append(' ').append(delBtn);
+					tbody.append(tr);
+				}
+			} else
+				alert('数据加载出错');
+
+		});
+	}
+	$(document).ready(function() {
+		$("#search,#firstPage,#previousPage,#nextPage,#lastPage").click(function() {
+			var params = new Object();
+			params.account = $('#searchAccount').val();
+			params.pageNo = pageNo;
+			params.pageSize = pageSize;
+			var id = $(this).prop('id');
+			params[id] = id;
+			console.log(id);
+			loadTable(params)
+		});
+		loadTable({
+			pageNo : pageNo,
+			pageSize : pageSize
+		});
+
+		$("#birthday").datepicker({
+			dateFormat : 'yy-mm-dd',
+			monthNames : [ "1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月" ],
+			dayNamesMin : [ '日', "一", "二", "三", "四", "五", "六" ],
+			prevText : "上一月",
+			nextText : "下一月"
+		});
+	});
+</script>
+</head>
+<body>
+	<div id="wrapper">
+		<!-- Navigation -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="navbar-header">
+				<div class="navbar-brand" style="color: white;">Ajax And JSON</div>
+			</div>
+
+			<ul class="nav navbar-right top-nav">
+				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> <b class="caret"></b></a>
+					<ul class="dropdown-menu message-dropdown">
+						<li class="message-preview"><a href="#">
+								<div class="media">
+									<span class="pull-left"> <img class="media-object" src="http://placehold.it/50x50" alt="">
+									</span>
+									<div class="media-body">
+										<h5 class="media-heading">
+											<strong>肖俊峰</strong>
+										</h5>
+										<p class="small text-muted">
+											<i class="fa fa-clock-o"></i> 昨天下午4:32
+										</p>
+										<p>哈哈哈</p>
+									</div>
+								</div>
+						</a></li>
+						<li class="message-preview"><a href="#">
+								<div class="media">
+									<span class="pull-left"> <img class="media-object" src="http://placehold.it/50x50" alt="">
+									</span>
+									<div class="media-body">
+										<h5 class="media-heading">
+											<strong>肖俊峰</strong>
+										</h5>
+										<p class="small text-muted">
+											<i class="fa fa-clock-o"></i> 昨天下午4:32
+										</p>
+										<p>哈哈哈</p>
+									</div>
+								</div>
+						</a></li>
+						<li class="message-preview"><a href="#">
+								<div class="media">
+									<span class="pull-left"> <img class="media-object" src="http://placehold.it/50x50" alt="">
+									</span>
+									<div class="media-body">
+										<h5 class="media-heading">
+											<strong>肖俊峰</strong>
+										</h5>
+										<p class="small text-muted">
+											<i class="fa fa-clock-o"></i> 昨天下午4:32
+										</p>
+										<p>哈哈哈</p>
+									</div>
+								</div>
+						</a></li>
+						<li class="message-footer"><a href="#">阅读所有讯息</a></li>
+					</ul></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i> <b class="caret"></b></a>
+					<ul class="dropdown-menu alert-dropdown">
+						<li><a href="#">Alert Name <span class="label label-default">Alert Badge</span></a></li>
+						<li><a href="#">Alert Name <span class="label label-primary">Alert Badge</span></a></li>
+						<li><a href="#">Alert Name <span class="label label-success">Alert Badge</span></a></li>
+						<li><a href="#">Alert Name <span class="label label-info">Alert Badge</span></a></li>
+						<li><a href="#">Alert Name <span class="label label-warning">Alert Badge</span></a></li>
+						<li><a href="#">Alert Name <span class="label label-danger">Alert Badge</span></a></li>
+						<li class="divider"></li>
+						<li><a href="#">查看所有</a></li>
+					</ul></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> sa(肖俊峰) <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li><a href="#"><i class="fa fa-fw fa-user"></i> 个人信息</a></li>
+						<li><a href="#"><i class="fa fa-fw fa-envelope"></i> 收件箱</a></li>
+						<li><a href="#"><i class="fa fa-fw fa-gear"></i> 设置</a></li>
+						<li class="divider"></li>
+						<li><a href="#"><i class="fa fa-fw fa-power-off"></i> 退出</a></li>
+					</ul></li>
+			</ul>
+
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav side-nav" style="background-color: #110011">
+					<li><a href="index.html"><i class="fa fa-fw fa-dashboard"></i>用户管理</a></li>
+					<li><a href="charts.html"><i class="fa fa-fw fa-bar-chart-o"></i>图表</a></li>
+					<li><a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i>地图<i class="fa fa-fw fa-caret-down"></i></a>
+						<ul id="demo">
+							<li class="active"><a href="#">百度地图</a></li>
+							<li><a href="#">高德地图 </a></li>
+						</ul></li>
+					<li><a href="blank-page.html"><i class="fa fa-fw fa-file"></i>其它......</a></li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</nav>
+
+		<div id="page-wrapper">
+			<div class="container-fluid">
+				<!-- Page Heading -->
+				<div class="row">
+					<div class="col-lg-12">
+						<h3 class="page-header text-center">用户列表</h3>
+						<div class="form-group text-center">
+							<label>账号:</label> <input id="searchAccount" type="text" style="width: 120px" placeholder="请输入账号">
+							<button id="search" type="button" class="btn btn-success btn-sm">搜索</button>
+						</div>
+						<table id="userTable" class="table table-bordered table-hover table-striped">
+							<thead>
+								<tr>
+									<th>账号</th>
+									<th>密码</th>
+									<th>性别</th>
+									<th>生日</th>
+									<th>工资</th>
+									<th>爱好</th>
+									<th class="text-center"><button id="add" type="button" onclick="addUser()" class="btn btn-sm btn-danger">添加</button></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Tanmay</td>
+									<td>Bangalore</td>
+									<td>560001</td>
+									<td>Tanmay</td>
+									<td>Bangalore</td>
+									<td>560001</td>
+									<td>Tanmay</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="text-center ">
+							<div class="btn-group">
+								<button id="firstPage" type="button" class="btn btn-primary btn-sm">首页</button>
+								<button id="previousPage" type="button" class="btn btn-primary btn-sm">前一页</button>
+							</div>
+							&nbsp;&nbsp;<label id="labelPageNo">1/2</label>&nbsp;&nbsp;
+							<div class="btn-group">
+								<button id="nextPage" type="button" class="btn btn-primary btn-sm">下一页</button>
+								<button id="lastPage" type="button" class="btn btn-primary btn-sm">末页</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.row -->
+
+		</div>
+		<!-- /.container-fluid -->
+	</div>
+	<!-- /#page-wrapper -->
+
+	</div>
+	<!-- /#wrapper -->
+
+	<div class="modal fade" id="userDialog" role="dialog" aria-labelledby="userDialogLabel" aria-hidden="true" data-backdrop="static">
+		<div class="modal-dialog" style="width: 800px;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title" id="userDialogLabel">添加用户</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<input type="hidden" name="id" value="" /> <input type="hidden" name="arrayFields" value="[hobbies]" />
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-4" id="exeErrors" class="alert alert-danger"></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><span class="glyphicon glyphicon-user"></span> 账号:</label>
+							<div class="col-sm-4">
+								<input class="form-control" id="account" type="text" placeholder="请输入账号">
+							</div>
+							<label class="col-sm-2 glyphicon glyphicon-star control-label" style="color: rgb(255, 5, 0);"></label>
+							<div class="col-sm-4">
+								<label id="accountError" class="control-label">d</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">密码:</label>
+							<div class="col-sm-5">
+								<input class="form-control" id="passwd" type="text" placeholder="请输入密码">
+							</div>
+							<label class="col-sm-1 glyphicon glyphicon-star control-label" style="color: rgb(255, 5, 0);"></label>
+							<div class="col-sm-4">
+								<label id="passwdError" class="control-label">d</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">确认密码:</label>
+							<div class="col-sm-5">
+								<input class="form-control" id="confirmPasswd" type="text" placeholder="请输入确认密码">
+							</div>
+							<label class="col-sm-1 glyphicon glyphicon-star control-label" style="color: rgb(255, 5, 0);"></label>
+							<div class="col-sm-4">
+								<label id="confirmPasswdError" class="control-label">d</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><span class="glyphicon glyphicon-calendar"></span> 生日:</label>
+							<div class="col-sm-4">
+								<input class="form-control" id="birthday" type="text" placeholder="yyyy-MM-dd格式">
+							</div>
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-4">
+								<label id="birthdayError" class="control-label">d</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">性别:</label>
+							<div class="col-sm-3">
+								<label class="radio-inline"> <input type="radio" name="sex" id="sexMale" value="男" checked> 男
+								</label> <label class="radio-inline"> <input type="radio" name="sex" id="sexFemale" value="女">女
+								</label>
+							</div>
+							<label class="col-sm-3 control-label"></label>
+							<div class="col-sm-4">
+								<label id="sexError" class="control-label">d</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">工资:</label>
+							<div class="col-sm-3">
+								<input class="form-control" id="salary" type="text" placeholder="请输入工资">
+							</div>
+							<label class="col-sm-3 control-label"></label>
+							<div class="col-sm-4">
+								<label id="salaryError" class="control-label">d</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">爱好:</label>
+							<div class="col-sm-5">
+								<label class="checkbox-inline"><input type="checkbox" name="hobbies" id="hobbiesFootball" value="足球">足球 </label> <label class="checkbox-inline"><input type="checkbox" name="hobbies" id="hobbiesBasketball" value="篮球">篮球
+								</label> <label class="checkbox-inline"><input type="checkbox" name="hobbies" id="hobbiesVolleyball" value="排球">排球 </label>
+							</div>
+							<label class="col-sm-1 glyphicon glyphicon-star control-label" style="color: rgb(255, 5, 0);"></label>
+							<div class="col-sm-4">
+								<label id="hobbiesError" class="control-label">d</label>
+							</div>
+						</div>
+
+					</form>
+				</div>
+				<div class="modal-footer" style="text-align: center">
+					<button type="button" class="btn btn-primary" onclick="ok()">提交</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+</body>
+
+</html>

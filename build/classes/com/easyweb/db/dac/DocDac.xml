@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment />
+	<!-- This is a comment -->
+	<entry key="allDocs">
+<![CDATA[
+SELECT * 
+FROM 
+docs
+ORDER BY dateTime DESC
+]]>
+	</entry>
+	<entry key="getDoc">
+<![CDATA[
+SELECT * 
+FROM 
+docs
+WHERE id = ?
+]]>
+	</entry>
+	<entry key="addDoc">
+<![CDATA[
+INSERT INTO DOCS
+(fileName,fileSize,path,dateTime) VALUES(?,?,?,?)
+]]>
+	</entry>
+	
+	<entry key="delDoc">
+<![CDATA[
+DELETE FROM DOCS 
+WHERE id=?
+]]>
+	</entry>
+	
+</properties>

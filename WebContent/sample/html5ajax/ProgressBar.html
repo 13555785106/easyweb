@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- 注意css文件与js文件的引用顺序，被依赖的放在前面！ -->
+<link rel="stylesheet" href="../../theme/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../../theme/jquery-ui/jquery-ui.theme.css">
+<link rel="stylesheet" type="text/css" href="../../theme/jquery-ui/jquery-ui.structure.css">
+<link rel="stylesheet" type="text/css" href="../../theme/jquery-ui/jquery.datetimepicker.css">
+<script src="../../theme/js/jquery.js"></script>
+<script src="../../theme/js/bootstrap.min.js"></script>
+<script src="../../theme/jquery-ui/jquery-ui.js"></script>
+<script src="../../theme/jquery-ui/jquery.datetimepicker.js"></script>
+<script>
+	var timer;
+	$(document).ready(function() {
+		$('#selectFileButton').click(function() {
+			$('#excelFileInput').trigger("click");
+		});
+		$('#uploadFileButton').click(function() {
+			if (!isExcelFile($('#excelFileInput')[0].files[0])) {
+				alert('请选择正确的Excel文件(.xls)');
+				return;
+			}
+			var form = new FormData(document.getElementById("uploadFileForm"));
+			if (form) {
+				$.ajax({
+					url : "RecieveExcel",
+					type : "POST",
+					data : form,
+					cache : false,
+					processData : false,
+					contentType : false,
+					beforeSend : function(xhr) {
+						$('#textMessage').html('开始上传文件!');
+						$('#btnGroup').hide();
+					},
+					complete : function(xhr, ts) {
+						$('#textMessage').html('上传文件完成!');
+					},
+					xhr : function() {
+						myXhr = $.ajaxSettings.xhr();
+						if (myXhr.upload) {
+							myXhr.upload.addEventListener('progress', fileuploadProgressHandling, false);
+						}
+						return myXhr;
+					},
+
+					success : function(data) {
+						console.log('success');
+						if (data.fileName) {
+							timer = setInterval("getProcessProgress('" + data.fileName + "')", 500);
+						}
+					},
+					error : function(e) {
+						if (timer)
+							clearInterval(timer);
+					}
+				});
+			}
+		});
+		$('#excelFileInput').change(function() {
+			if (isExcelFile(this.files[0])) {
+				$('#textMessage').html('文件名称：' + this.files[0].name + '<br/>文件大小：' + this.files[0].size);
+			} else
+				alert('请选择正确的Excel文件(.xls)');
+		});
+	});
+
+	function isExcelFile(file) {
+		if (file && file.name.endsWith('.xls'))
+			return true;
+		else
+			return false;
+	}
+
+	function fileuploadProgressHandling(e) {
+		var curr = e.loaded;
+		var total = e.total;
+		percent = Math.round(curr / total * 100);
+		$('#uploadProgressBar').width(percent + '%');
+		$('#textMessage').html('文件上传中，请耐心等待！');
+	}
+	function getProcessProgress(fileName) {
+		if (fileName) {
+			$.get("ProcessExcelProgress?fileName=" + fileName, function(data, status) {
+				if (status === 'success') {
+					var textMessage = $('#textMessage');
+					textMessage.html('<span style="color:red">已处理 ' + data.rowNo + ' 行,总计 ' + data.rowCount + ' 行。</span><br/>').append(data.rowContent);
+					var percent = Math.round(data.rowNo / data.rowCount * 100);
+					var uploadProgressBar = $('#uploadProgressBar');
+					uploadProgressBar.width(percent + '%').text(percent + '%');
+					if (data.rowNo == data.rowCount && timer) {
+						textMessage.html('数据处理完毕,总计 ' + data.rowCount + ' 行。');
+						uploadProgressBar.width('0%').text('0%');
+						clearInterval(timer);
+						$('#btnGroup').show();
+					}
+				} else {
+					if (timer){
+						clearInterval(timer);
+						$('#btnGroup').show();
+					}
+				}
+			});
+		}
+	}
+</script>
+<title>进度条</title>
+</head>
+<body>
+	<div class="container">
+		<div class="text-center">
+			<h2>进度条展示</h2>
+		</div>
+		<div class="text-center">本程序用来模拟上传文件及后台需要长时间处理数据时，如何在前台显示数据处理的进度。</div>
+		<div class="row">
+			<div class="col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+				<div class="progress progress-striped active">
+					<div id="uploadProgressBar" class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div>
+				<div id="textMessage" class="alert alert-info" style="font-size: 10px;">提示信息。</div>
+				<div id="btnGroup" class="text-center">
+					<button id="selectFileButton" type="button" class="btn btn-info btn-sm">选择Excel文件</button>
+					<button id="uploadFileButton" type="button" class="btn btn-info btn-sm">上传Excel文件</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<form id="uploadFileForm" method="post" enctype="multipart/form-data" action="RecieveExcel" style="visibility: hidden;">
+		<input id="excelFileInput" type="file" name="excelFileInput" />
+	</form>
+</body>
+</html>
