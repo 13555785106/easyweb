@@ -1,6 +1,6 @@
 EasyWeb Framework
-本程序是个微型web开发框架
-主要完成了表单数据到Bean的转换，对于数据的验证采用了Hibernate Validator 6。
+使用JSP/Servlet编程，表单数据到Bean的转换并验证是个繁琐无聊的过程。
+EasyWeb主要完成了表单数据到Bean的转换，数据的校验采用了Hibernate Validator 6。
 
 在jdk1.8、Tomcat 7.0上测试通过。
 
