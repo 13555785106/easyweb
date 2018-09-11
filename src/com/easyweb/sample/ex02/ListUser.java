@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebServlet;
 
 import com.easyweb.core.EasyHttpServlet;
 import com.easyweb.core.HttpReqResp;
+import com.easyweb.db.dac.AuthorityDac;
 import com.easyweb.db.dac.UserDac;
 
 @WebServlet(name="sample.ex02.ListUser",urlPatterns="/sample/ex02/ListUser")
@@ -14,6 +15,7 @@ public class ListUser extends EasyHttpServlet {
 
 	@Override
 	public void doGet(HttpReqResp hrr) throws ServletException, IOException {
+		hrr.setAttribute("authTypes", AuthorityDac.getInstance().allAuths());
 		hrr.setReqResult(UserDac.getInstance().allUsers());
 		hrr.forwardByViewName("Result.jsp");
 	}

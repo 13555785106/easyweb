@@ -22,7 +22,7 @@ WHERE id = ?
 	<entry key="addUser">
 <![CDATA[
 INSERT INTO USERS
-(account,passwd,sex,salary,birthday,hobbies) VALUES(?,?,?,?,?,?)
+(account,passwd,sex,salary,birthday,hobbies,authorities) VALUES(?,?,?,?,?,?,?)
 ]]>
 	</entry>
 	<entry key="chgUser">
@@ -33,7 +33,9 @@ passwd=?,
 sex=?,
 salary=?,
 birthday=?,
-hobbies=? WHERE id=?
+hobbies=?, 
+authorities=?
+WHERE id=?
 ]]>
 	</entry>
 	<entry key="delUser">

@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import com.easyweb.bean.BeanUtils;
 import com.easyweb.core.EasyHttpServlet;
 import com.easyweb.core.HttpReqResp;
+import com.easyweb.db.dac.AuthorityDac;
 import com.easyweb.db.dac.UserDac;
 import com.easyweb.db.model.User;
 
@@ -17,15 +18,16 @@ public class ChgUser extends EasyHttpServlet {
 	@Override
 	public void doGet(HttpReqResp hrr) throws ServletException, IOException {
 		User user = UserDac.getInstance().getUser(Integer.parseInt(hrr.getRequest().getParameter("id")));
-		System.out.println(user);
 		if (user != null) {
 			hrr.setReqParams(BeanUtils.bean2MapStr(user));
+			hrr.setAttribute("authTypes", AuthorityDac.getInstance().allAuths());
 		}
 		hrr.forwardByViewName("Input.jsp");
 	}
 
 	@Override
 	public void doPost(HttpReqResp hrr) throws ServletException, IOException {
+		hrr.setAttribute("authTypes", AuthorityDac.getInstance().allAuths());
 		User user = hrr.convertAndValidate(User.class);
 		if (user != null) {
 			if (!user.getPasswd().equals(user.getConfirmPasswd())) {

@@ -14,12 +14,13 @@ public class ListFile extends EasyHttpServlet {
 
 	@Override
 	public void doGet(HttpReqResp hrr) throws ServletException, IOException {
-		hrr.setReqResult(DocDac.getInstance().allDocs());
-		hrr.forwardByViewName("Result.jsp");
+		doPost(hrr);
 	}
 
 	@Override
 	public void doPost(HttpReqResp hrr) throws ServletException, IOException {
-		doGet(hrr);
+		
+		hrr.setReqResult(DocDac.getInstance().allDocs());
+		hrr.forwardByViewName("Result.jsp");
 	}
 }

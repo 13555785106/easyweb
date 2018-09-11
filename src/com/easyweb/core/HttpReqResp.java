@@ -38,7 +38,12 @@ public class HttpReqResp {
 		this.messagesMap = messagesMap;
 		this.viewBaseName = viewBaseName;
 	}
-
+	public void setAttribute(String name,Object val) {
+		request.setAttribute(name, val);
+	}
+	public Object getAttribute(String name) {
+		return request.getAttribute(name);
+	}
 	// 便于forward
 	public void forward(String path) throws ServletException, IOException {
 		request.getRequestDispatcher(path).forward(request, response);

@@ -9,8 +9,7 @@ import com.easyweb.core.HttpReqResp;
 import com.easyweb.db.dac.UserDac;
 import com.easyweb.db.model.LoginForm;
 import com.easyweb.db.model.User;
-
-@WebServlet("/Login")
+@WebServlet(name="Login",urlPatterns="/Login")
 public class Login extends EasyHttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -26,7 +25,7 @@ public class Login extends EasyHttpServlet {
 			User user = UserDac.getInstance().login(loginForm.getAccount(), loginForm.getPasswd());
 			if (user != null) {
 				hrr.getRequest().getSession().setAttribute("curUser", user);
-				hrr.getResponse().sendRedirect("sample/ex02/ListUser");
+				hrr.getResponse().sendRedirect("MainPage");
 				return;
 			} else {
 				hrr.addExeError("登录失败");

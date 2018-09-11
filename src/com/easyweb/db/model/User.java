@@ -1,7 +1,6 @@
 package com.easyweb.db.model;
 
 import java.sql.Date;
-import java.util.Arrays;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -40,8 +39,7 @@ public class User {
 	@StringContain(items="足球,篮球,排球",separator=",",num=1,message="在 \"{items}\" 中至少选择 {num} 项")
 	private String hobbies;
 
-	public User() {
-	}
+	private String authorities;
 
 	public int getId() {
 		return id;
@@ -107,10 +105,20 @@ public class User {
 		this.hobbies = hobbies;
 	}
 
+	public String getAuthorities() {
+		return authorities;
+	}
+
+	public void setAuthorities(String authorities) {
+		this.authorities = authorities;
+	}
+
 	@Override
 	public String toString() {
-		return "User2 [id=" + id + ",account=" + account + ", passwd=" + passwd + ", confirmPasswd=" + confirmPasswd + ", sex=" + sex + ", salary=" + salary + ", birthday=" + birthday + ", hobbies="
-				+ (hobbies == null ? "null" : Arrays.asList(hobbies.split(",")).toString()) + "]";
+		return "User [id=" + id + ", account=" + account + ", passwd=" + passwd + ", confirmPasswd=" + confirmPasswd
+				+ ", sex=" + sex + ", salary=" + salary + ", birthday=" + birthday + ", hobbies=" + hobbies
+				+ ", authorities=" + authorities + "]";
 	}
+	
 
 }

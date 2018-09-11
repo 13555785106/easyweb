@@ -10,7 +10,7 @@
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Size">
 				<message>XML 账号长度必须在{min}和{max}之间</message>
-				<element name="min">3</element>
+				<element name="min">2</element>
 				<element name="max">5</element>
 			</constraint>
 		</field>
@@ -20,7 +20,7 @@
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Size">
 				<message>XML 密码长度必须在{min}和{max}之间</message>
-				<element name="min">4</element>
+				<element name="min">3</element>
 				<element name="max">5</element>
 			</constraint>
 		</field>
@@ -30,7 +30,7 @@
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Size">
 				<message>XML 确认密码长度必须在{min}和{max}之间</message>
-				<element name="min">4</element>
+				<element name="min">3</element>
 				<element name="max">5</element>
 			</constraint>
 		</field>

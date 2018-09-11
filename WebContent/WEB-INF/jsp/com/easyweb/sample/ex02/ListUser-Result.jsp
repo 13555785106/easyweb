@@ -36,6 +36,7 @@
 						<th>生日</th>
 						<th>工资</th>
 						<th>爱好</th>
+						<th>权限</th>
 						<th class="text-center"><a href="AddUser"
 							class="btn btn-primary btn-xs" role="button">添加</a></th>
 					</tr>
@@ -48,6 +49,26 @@
 									pattern="yyyy-MM-dd" /></td>
 							<td><fmt:formatNumber value="${user.salary}" pattern="0.00" /></td>
 							<td>${user.hobbies}</td>
+							<td>
+							<c:forEach items="${authTypes}" var="authTypeItem">
+							<c:set var="showAuthority" value=""/>
+							<c:forEach items="${authTypeItem.value}" var="val">
+							<c:if test="${fn:contains(user.authorities,val.id)}">
+								<c:set var="showAuthority" value="true"/>
+							</c:if>
+							</c:forEach>
+							
+							
+							<c:if test="${showAuthority}">
+							${authTypeItem.key.name}:
+								<c:forEach items="${authTypeItem.value}" var="authority">
+									<c:if test="${authority.id != 99999 && fn:contains(user.authorities,authority.id)}">
+									${authority.name}
+									</c:if>
+								</c:forEach><br/>
+							</c:if>
+							</c:forEach>	
+							</td>
 							<td class="text-center"><a href="ChgUser?id=${user.id}"
 								class="btn btn-primary btn-xs" role="button">修改</a> <a
 								href="DelUser/${user.id}" class="btn btn-primary btn-xs"

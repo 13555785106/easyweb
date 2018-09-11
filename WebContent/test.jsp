@@ -14,6 +14,6 @@
 <title>Test</title>
 </head>
 <body>
-
+<%=AuthorityDac.getInstance().allAuths()%>
 </body>
 </html>

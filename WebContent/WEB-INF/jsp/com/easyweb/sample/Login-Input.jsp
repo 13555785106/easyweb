@@ -8,33 +8,57 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- 注意css文件与js文件的引用顺序，被依赖的放在前面！ -->
+<link rel="stylesheet" href="${baseUrl}theme/css/bootstrap.min.css">
+<script src="${baseUrl}theme/js/jquery.js"></script>
+<script src="${baseUrl}theme/js/bootstrap.min.js"></script>
 <title>登录</title>
 </head>
 <body>
-	<form method="post">
-		<table align="center">
-			<caption>登录</caption>
-			<tr>
-				<td colspan="3"><c:forEach items="${exeErrors}" var="err">
+	<div class="container">
+		<form method="post" role="form" class="form-inline">
+			<div class="row">
+				<div class="col-md-4 col-md-offset-4" style="text-align: center">
+					<h2 class="text-primary">欢迎登录</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4 col-md-offset-4">
+					<c:forEach items="${exeErrors}" var="err">
 						<c:out value="${err}" />
 						<br />
-					</c:forEach></td>
-			</tr>
-			<tr>
-				<th>账号：<span style="color: red; font-weight: bolder;">*</span></th>
-				<td><input type="text" name="account"
-					value="${reqParams.account}" /></td>
-				<td><span> ${paramErrors.account[0]}</span></td>
-			</tr>
-			<tr>
-				<th>密码：<span style="color: red; font-weight: bolder;">*</span></th>
-				<td><input type="password" name="passwd" value="${reqParams.passwd}" /></td>
-				<td><span>${paramErrors.passwd[0]}</span></td>
-			</tr>
-			<tr>
-				<td colspan="3" align="center"><input type="submit" value="确定" /></td>
-			</tr>
-		</table>
-	</form>
+					</c:forEach>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 col-md-offset-4" style="padding-left:24px;">
+					<label for="account">账号：</label><span
+						style="color: red; font-weight: bolder;">*</span> <input
+						type="text" name="account" value="${reqParams.account}"
+						class="form-control" /> 
+				</div>
+				<div class="col-md-3">
+				${paramErrors.account[0]}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 col-md-offset-4" style="padding-left:24px;">
+					<label for="passwd">密码：</label><span
+						style="color: red; font-weight: bolder;">*</span> <input
+						type="password" name="passwd" value="${reqParams.passwd}"
+						class="form-control" />
+				</div>
+				<div class="col-md-3">
+				${paramErrors.passwd[0]}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4 col-md-offset-4" style="text-align: center">
+					<input type="submit" value="确定" class="btn btn-danger"/>
+				</div>
+			</div>
+
+		</form>
+	</div>
 </body>
 </html>

@@ -58,6 +58,7 @@ public class UserDac extends Dac {
 			stmt.setFloat(4, user.getSalary());
 			stmt.setDate(5, user.getBirthday());
 			stmt.setString(6, user.getHobbies());
+			stmt.setString(7, user.getAuthorities());
 			if (stmt.executeUpdate() == 1) {
 				rs = stmt.getGeneratedKeys();
 				if (rs.next())
@@ -90,7 +91,7 @@ public class UserDac extends Dac {
 	public boolean chgUser(User user) {
 		try {
 			return 1 == DB.getInstance().qr().update(getSql("chgUser"), user.getAccount(), user.getPasswd(),
-					user.getSex(), user.getSalary(), user.getBirthday(), user.getHobbies(),user.getId());
+					user.getSex(), user.getSalary(), user.getBirthday(), user.getHobbies(),user.getAuthorities(),user.getId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
