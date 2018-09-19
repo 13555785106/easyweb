@@ -10,6 +10,7 @@ import com.easyweb.core.EasyHttpServlet;
 import com.easyweb.core.HttpReqResp;
 import com.easyweb.db.dac.DocDac;
 import com.easyweb.db.model.Doc;
+import com.easyweb.utils.MimeType;
 
 @WebServlet(name="sample.updownload.DownloadFile",urlPatterns="/sample/updownload/DownloadFile")
 
@@ -27,13 +28,14 @@ public class DownloadFile extends EasyHttpServlet {
 		Doc doc = DocDac.getInstance().getDoc(id);
 		String userAgent = hrr.getRequest().getHeader("User-Agent");
 		if (doc != null) {
-			hrr.getResponse().setContentType("image/png");
+			String  fileName = doc.getFileName();
+			hrr.getResponse().setContentType(MimeType.getInstance().getMimeByFileName(fileName));
 			if (userAgent.indexOf("Trident") != -1 || userAgent.indexOf("MSIE") != -1)
 				hrr.getResponse().addHeader("Content-Disposition",
-						"attachment; filename=" + new String(doc.getFileName().getBytes("GBK"), "ISO-8859-1"));
+						"attachment; filename=" + new String(fileName.getBytes("GBK"), "ISO-8859-1"));
 			else
 				hrr.getResponse().addHeader("Content-Disposition",
-						"attachment; filename=" + new String(doc.getFileName().getBytes("UTF-8"), "ISO-8859-1"));
+						"attachment; filename=" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1"));
 			byte[] buffer = new byte[8192];
 			int count = 0;
 			OutputStream os = hrr.getResponse().getOutputStream();

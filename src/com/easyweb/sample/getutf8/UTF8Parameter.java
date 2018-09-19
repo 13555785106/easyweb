@@ -16,6 +16,7 @@ public class UTF8Parameter extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8");
 		request.setCharacterEncoding("UTF-8");//注意，此行代码在GET方式下无作用！尽在POST方式下起作用。
+		System.out.println(request.getContentType());
 		//URL都是以ASCII方式传递的，所以要自己转！
 		String name = new String(request.getParameter("name").getBytes("ISO8859-1"),"UTF-8");
 		String sex = new String(request.getParameter("sex").getBytes("ISO8859-1"),"UTF-8");
