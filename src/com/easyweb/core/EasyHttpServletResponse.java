@@ -13,8 +13,8 @@ public class EasyHttpServletResponse extends HttpServletResponseWrapper {
 
 	public EasyHttpServletResponse(HttpServletResponse response, String charset) {
 		super(response);
-		setCharacterEncoding("UTF-8");
-		setContentType("text/html; charset=UTF-8");
+		setCharacterEncoding(charset);
+		setContentType("text/html; charset="+charset);
 	}
 
 }

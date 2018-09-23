@@ -12,7 +12,7 @@ import com.easyweb.db.dac.DocDac;
 import com.easyweb.db.model.Doc;
 import com.easyweb.utils.MimeType;
 
-@WebServlet(name="sample.updownload.DownloadFile",urlPatterns="/sample/updownload/DownloadFile")
+@WebServlet(name = "sample.updownload.DownloadFile", urlPatterns = "/sample/updownload/DownloadFile")
 
 public class DownloadFile extends EasyHttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -24,18 +24,22 @@ public class DownloadFile extends EasyHttpServlet {
 
 	@Override
 	public void doPost(HttpReqResp hrr) throws ServletException, IOException {
-		int id= Integer.parseInt(hrr.getRequest().getParameter("id"));
+		int id = Integer.parseInt(hrr.getRequest().getParameter("id"));
 		Doc doc = DocDac.getInstance().getDoc(id);
-		String userAgent = hrr.getRequest().getHeader("User-Agent");
+
 		if (doc != null) {
-			String  fileName = doc.getFileName();
-			hrr.getResponse().setContentType(MimeType.getInstance().getMimeByFileName(fileName));
-			if (userAgent.indexOf("Trident") != -1 || userAgent.indexOf("MSIE") != -1)
-				hrr.getResponse().addHeader("Content-Disposition",
-						"attachment; filename=" + new String(fileName.getBytes("GBK"), "ISO-8859-1"));
-			else
-				hrr.getResponse().addHeader("Content-Disposition",
-						"attachment; filename=" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1"));
+			hrr.getResponse().setContentLength((int) doc.getFileSize());
+			String fileName = doc.getFileName();
+			String contentType = MimeType.getInstance().getMimeByFileName(fileName);
+			if (contentType == null)
+				contentType = "application/octet-stream";
+			String charset = hrr.getResponse().getCharacterEncoding();
+			if (charset == null)
+				charset = "UTF-8";
+			hrr.getResponse().setContentType(contentType);
+
+			hrr.getResponse().addHeader("Content-Disposition",
+					"attachment; filename=" + new String(fileName.getBytes(charset), "ISO-8859-1"));
 			byte[] buffer = new byte[8192];
 			int count = 0;
 			OutputStream os = hrr.getResponse().getOutputStream();
