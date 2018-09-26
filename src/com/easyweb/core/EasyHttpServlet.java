@@ -23,6 +23,7 @@ public class EasyHttpServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String viewPath = "/WEB-INF/jsp";
 	private String viewBaseName = viewPath + "/" + this.getClass().getName().replace('.', '/');
+	private String contentType = "text/html";
 	private String charSet = "UTF-8";
 	private Map<String, String> messagesMap = new HashMap<String, String>(Messages.getInstance().getMessages());
 
@@ -70,55 +71,53 @@ public class EasyHttpServlet extends HttpServlet {
 		this.charSet = charSet;
 	}
 
-
-
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(new HttpReqResp(new EasyHttpServletRequest(request, charSet), new EasyHttpServletResponse(response, charSet),
-				messagesMap, viewBaseName));
+		doGet(new HttpReqResp(new EasyHttpServletRequest(request, charSet),
+				new EasyHttpServletResponse(response, contentType, charSet), messagesMap, viewBaseName));
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doPost(new HttpReqResp(new EasyHttpServletRequest(request, charSet),
-				new EasyHttpServletResponse(response, charSet), messagesMap, viewBaseName));
+				new EasyHttpServletResponse(response, contentType, charSet), messagesMap, viewBaseName));
 	}
 
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doPut(new HttpReqResp(new EasyHttpServletRequest(request, charSet), new EasyHttpServletResponse(response, charSet),
-				messagesMap, viewBaseName));
+		doPut(new HttpReqResp(new EasyHttpServletRequest(request, charSet),
+				new EasyHttpServletResponse(response, contentType, charSet), messagesMap, viewBaseName));
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doDelete(new HttpReqResp(new EasyHttpServletRequest(request, charSet),
-				new EasyHttpServletResponse(response, charSet), messagesMap, viewBaseName));
+				new EasyHttpServletResponse(response, contentType, charSet), messagesMap, viewBaseName));
 	}
 
 	@Override
 	protected void doHead(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doHead(new HttpReqResp(new EasyHttpServletRequest(request, charSet),
-				new EasyHttpServletResponse(response, charSet), messagesMap, viewBaseName));
+				new EasyHttpServletResponse(response, contentType, charSet), messagesMap, viewBaseName));
 	}
 
 	@Override
 	protected void doOptions(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doOptions(new HttpReqResp(new EasyHttpServletRequest(request, charSet),
-				new EasyHttpServletResponse(response, charSet), messagesMap, viewBaseName));
+				new EasyHttpServletResponse(response, contentType, charSet), messagesMap, viewBaseName));
 	}
 
 	@Override
 	protected void doTrace(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doTrace(new HttpReqResp(new EasyHttpServletRequest(request, charSet),
-				new EasyHttpServletResponse(response, charSet), messagesMap, viewBaseName));
+				new EasyHttpServletResponse(response, contentType, charSet), messagesMap, viewBaseName));
 	}
 
 	protected void doGet(HttpReqResp hrr) throws ServletException, IOException {

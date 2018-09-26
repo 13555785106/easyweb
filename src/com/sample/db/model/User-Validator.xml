@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping validation-mapping-1.1.xsd" version="1.1">
+	<default-package>com.sample.db.model</default-package>
+	<bean class="User" ignore-annotations="true">
+		<field name="account">
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>XML 账号不能为空</message>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.Size">
+				<message>XML 账号长度必须在{min}和{max}之间</message>
+				<element name="min">2</element>
+				<element name="max">5</element>
+			</constraint>
+		</field>
+		<field name="passwd">
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>XML 密码不能为空</message>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.Size">
+				<message>XML 密码长度必须在{min}和{max}之间</message>
+				<element name="min">3</element>
+				<element name="max">5</element>
+			</constraint>
+		</field>
+		<field name="confirmPasswd">
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>XML 确认密码不能为空</message>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.Size">
+				<message>XML 确认密码长度必须在{min}和{max}之间</message>
+				<element name="min">3</element>
+				<element name="max">5</element>
+			</constraint>
+		</field>
+		<field name="sex">
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>XML 性别不能为空</message>
+			</constraint>
+			<constraint annotation="com.easyweb.constraint.StringContain">
+				<message>XML 在 {items} 中至少选择 {num} 项</message>
+				<element name="items">男,女</element>
+				<element name="num">1</element>
+				<element name="separator">,</element>
+			</constraint>
+		</field>
+		<field name="salary">
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>XML 工资不能为空</message>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>XML 工资必须大于等于 {value}</message>
+				<element name="value">0</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.Max">
+				<message>XML 工资必须小于等于 {value}</message>
+				<element name="value">60000</element>
+			</constraint>
+		</field>
+		<field name="hobbies">
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>XML 爱好不能为空</message>
+			</constraint>
+			<constraint annotation="com.easyweb.constraint.StringContain">
+				<message>XML 在 {items} 中至少选择 {num} 项</message>
+				<element name="items">足球,篮球,排球</element>
+				<element name="num">1</element>
+				<element name="separator">,</element>
+			</constraint>
+		</field>
+	</bean>
+</constraint-mappings>

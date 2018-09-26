@@ -18,7 +18,8 @@ import com.easyweb.bean.editor.DateEditor;
 import com.easyweb.bean.editor.SqlDateEditor;
 import com.easyweb.bean.editor.SqlTimeEditor;
 import com.easyweb.bean.editor.SqlTimestampEditor;
-import com.easyweb.db.model.User;
+import com.sample.db.model.User;
+
 
 /**
  * 一个工具类。实现POJO与MAP之间的互转。

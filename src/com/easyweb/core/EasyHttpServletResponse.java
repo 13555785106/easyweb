@@ -11,10 +11,10 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class EasyHttpServletResponse extends HttpServletResponseWrapper {
 
-	public EasyHttpServletResponse(HttpServletResponse response, String charset) {
+	public EasyHttpServletResponse(HttpServletResponse response,String mimeType, String charset) {
 		super(response);
 		setCharacterEncoding(charset);
-		setContentType("text/html; charset="+charset);
+		setContentType(mimeType);
 	}
 
 }
