@@ -10,4 +10,4 @@ EasyWeb主要完成了表单数据到Bean的转换，数据的校验采用了Hib
 
 Tomcat8.0以上版本不需要此操作。
 
-![Image text](demo01.png)
+![image](demo01.png)
