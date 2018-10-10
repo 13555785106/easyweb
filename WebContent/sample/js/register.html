@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>注册</title>
+<style>
+*{margin:0px;padding:0px;font-size:10px;}
+table caption{font-size:16px;font-weight:bolder;}
+table tr td {border:0px solid red;}
+input[name="account"],input[name="passwd"],input[name="confirmPassword"]{width:80px;}
+input[name="name"]{width:60px;}
+</style>
+<script>
+function trim(str)
+{
+     return str.replace(/(^\s*)|(\s*$)/g,'');
+}
+function validateForm(f){
+	var ret = true;
+	//清空错误提示
+	
+	var accountError = document.getElementById("accountError");
+	accountError.innerHTML='';
+	
+	var passwdError = document.getElementById("passwdError");
+	passwdError.innerHTML='';
+	var confirmPasswdError = document.getElementById("confirmPasswdError");
+	confirmPasswdError.innerHTML='';
+	
+	var nameError = document.getElementById("nameError");
+	nameError.innerHTML='';
+
+	var identificationCardError = document.getElementById("identificationCardError");
+	identificationCardError.innerHTML='';
+
+	var mobileError = document.getElementById("mobileError");
+	mobileError.innerHTML='';
+
+	var birthdayError = document.getElementById("birthdayError");
+	birthdayError.innerHTML='';
+
+	var emailError = document.getElementById("emailError");
+	emailError.innerHTML='';
+
+	var account = trim(f.account.value);
+	var regAccount=new RegExp(/^139\d{8}$/);
+	//var regAccount=new RegExp("^139\\d{8}$");
+	if(!regAccount.test(account)){
+		accountError.innerHTML='账号必须为139的手机号';
+		ret=false;
+	}
+
+	var passwd = f.passwd.value;
+	if(passwd.length<3){
+		passwdError.innerHTML='密码长度不低于3个字符';
+		ret=false;
+	}
+	//在密码长度达到要求的情况下，判断确认密码是否与其一致。
+	if(confirmPasswdError.innerHTML.length==0){
+		var confirmPasswd = f.confirmPasswd.value;
+		if(confirmPasswd != passwd){
+			confirmPasswdError.innerHTML='确认密码与密码不一致';
+			ret=false;
+		}
+	}
+
+	/*var name = trim(f.name.value);
+	if(name.length==0){
+		nameError.innerHTML='真实姓名必须填写';
+		ret=false;
+	}
+
+	var identificationCard = trim(f.identificationCard.value);
+	var regIdentificationCard=new RegExp(/^\d{18}$/);
+
+	if(identificationCard.length>0 && !regIdentificationCard.test(identificationCard)){
+		identificationCardError.innerHTML='身份证号格式错误，必须是18位数字';
+		ret=false;
+	}
+
+
+	var mobile = trim(f.mobile.value);
+	var regMobile=new RegExp(/^\d{11}$/);
+
+	if(mobile.length>0 && !regMobile.test(mobile)){
+		mobileError.innerHTML='手机号码必须是11位数字';
+		ret=false;
+	}
+
+	var birthday = trim(f.birthday.value);
+	var regBirthday=new RegExp(/^(?:19|20)[0-9][0-9]-(?:(?:0[1-9])|(?:1[0-2]))-(?:(?:[0-2][1-9])|(?:[1-3][0-1]))$/);
+	if(birthday.length>0 && !regBirthday.test(birthday)){
+		birthdayError.innerHTML='生日必须是 yyyy-MM-dd 格式';
+		ret=false;
+	}
+
+	var email = trim(f.email.value);
+	var regEmail=new RegExp(/^['_a-z0-9-\+]+(\.['_a-z0-9-\+]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*\.([a-z]{2,6})$/);
+	if(email.length>0 && !regEmail.test(email)){
+		emailError.innerHTML='邮件格式错误';
+		ret=false;
+	}*/
+
+	return ret;
+}
+//init函数必须在文档加载完毕后执行，否则textInputs会获得空。
+//此处在body通过指定onload事件确保init在文档加载完毕后执行。
+//另一种方式是将init内部的代码放在表单之后执行。 
+function init(){
+	var textInputs = document.getElementsByTagName("input");
+	for(var i=0;i<textInputs.length;i++){
+		if(textInputs[i].type=='text' || textInputs[i].type=='password'){
+			console.log(typeof(textInputs[i]));
+			textInputs[i].onfocus=function(){
+				console.log(this);
+				this.style.backgroundColor='#FFFF00';
+			};
+			textInputs[i].onblur=function(){
+				console.log(this);
+				this.style.backgroundColor='#FFFFFF';
+			};
+		}
+	}
+}
+
+</script>
+</head>
+
+<body onload="init()">
+<form name="register" method="post" onsubmit="return validateForm(this);" style="border:1px solid black;text-align:center"
+action="http://www.163.com">
+<table style="margin:auto;text-align:left;">
+  <caption>注册成为电信会员</caption>
+  <tr>
+    <td colspan="3">&nbsp;</td>
+    </tr>
+  <tr>
+    <td>*账号：</td>
+    <td>
+        <input name="account" type="text"/></td>
+    <td><span id="accountError" style="color:red"></span></td>
+  </tr>
+  <tr>
+    <td>*密码：</td>
+    <td><input name="passwd" type="password"/></td>
+    <td><span id="passwdError" style="color:red"></span></td>
+  </tr>
+  <tr>
+    <td>*确认密码：</td>
+    <td><input name="confirmPasswd" type="password" /></td>
+    <td><span id="confirmPasswdError" style="color:red"></span></td>
+  </tr>
+  <tr>
+    <td>*真实姓名：</td>
+    <td><input name="name" type="text" /></td>
+    <td><span id="nameError" style="color:red"></span></td>
+  </tr>
+  <tr>
+    <td>身份证号：</td>
+    <td><input type="text" name="identificationCard" /></td>
+    <td><span id="identificationCardError" style="color:red"></span></td>
+  </tr>
+  <tr>
+    <td>性别：</td>
+    <td><span style="vertical-align:middle;">男</span>
+	<input name="sex" type="radio" value="male" checked="checked" style="vertical-align:middle;"/>
+      <span style="vertical-align:middle;">女</span>
+	  <input type="radio" name="sex" value="female" style="vertical-align:middle;"/></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>手机号码：</td>
+    <td><input name="mobile" type="text" size="12" /></td>
+    <td><span id="mobileError" style="color:red"></span></td>
+  </tr>
+  <tr>
+    <td>生日：</td>
+    <td><input name="birthday" type="text" size="12" /></td>
+    <td><span id="birthdayError" style="color:red"></span></td>
+  </tr>
+  <tr>
+    <td>电子邮件：</td>
+    <td><input type="text" name="email" /></td>
+    <td><span id="emailError" style="color:red"></span></td>
+  </tr>
+    <tr>
+    <td>第一辆车：</td>
+    <td>
+	<select name="firstCar" style="width:60px">
+	  <option value ="" >无</option>
+	  <option value ="volvo" >沃尔沃</option>
+	  <option value ="saab" >萨博</option>
+	  <option value="opel" >欧宝</option>
+	  <option value="audi" selected="selected">奥迪</option>
+	</select>
+	</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>业余爱好：</td>
+    <td>
+	足球<input type="checkbox" name="hobbies" value="足球"/>
+	篮球<input type="checkbox" name="hobbies" value="篮球"/>
+	排球<input type="checkbox" name="hobbies" value="排球"/>
+	</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <div align="center">
+        <input type="submit" name="ok" value="确定" />
+      </div></td>
+    </tr>
+</table>
+<!--
+也可以将init函数内部的代码移动到此处来执行。
+-->
+</form>
+</body>
+
+
+
+</html>

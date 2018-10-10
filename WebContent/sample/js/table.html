@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>JS表格数据添加、修改、删除</title>
+<style>
+*{
+	font-size:10px;
+}
+table#dialog{
+	background-color:LightYellow;
+	padding:10px;
+	margin-right:20px;
+	float:left;
+	visibility:hidden;
+	border-radius:6px;
+	border:2px dashed lightgray;
+}
+table#dialog caption{
+	background-color:SteelBlue;
+	color:white;
+	font-size:16px;
+	font-weight:bolder;
+	border-radius:6px;
+}
+table#personTable{
+	border:2px dashed gray;
+}
+table#personTable caption{
+	background-color:DarkCyan;
+	color:white;
+	font-size:16px;
+	font-weight:bolder;
+	border-radius: 6px;
+	padding:3px;
+}
+table#personTable th{
+	background-color:Darkorange;
+}
+table#personTable td{
+	background-color:WhiteSmoke;
+}
+table#personTable td.even{
+	background-color:PapayaWhip;
+}
+.center {
+	text-align:center;
+}
+.right {
+	text-align:right;
+}
+.button1 {
+    background-color: #008CBA; /* Green */
+    border: none;
+    color: white;
+    padding: 3px 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px 4px;
+    cursor: pointer;
+	border-radius: 6px;
+}
+.button2 {
+    background-color: #555555; 
+    border: none;
+    color: white;
+    padding: 3px 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px 4px;
+    cursor: pointer;
+	border-radius: 6px;
+}
+
+</style>
+<script src="../../theme/js/jquery.js"></script>
+<script>
+//用来保存修改时选中的tr,如果为null说明是添加操作，如果不为null说明是修改操作
+var selectedTr = null;
+
+function altTableRowBgColor(){
+	$("#personTable tr").each(function(index,element){
+		$(element).children("td").each(function(i,e){
+			$(e).removeClass("even");
+			if(index%2==0) $(e).addClass("even");
+		});
+	});
+}
+
+$(document).ready(function(){
+  $("#addButton").click(function(){
+	$("#dialog caption").text("添加学员信息");//修改对话框(就是表格)的标题
+    $("#dialog").css("visibility","visible");//显示对话框(就是表格)
+  });
+  $("#okButton").click(function(){
+	//以下三行获取用户输入的姓名、性别、年龄
+    var name = $("input[name='name']").val();
+	var sex = $("input[name='sex']:checked").val();
+	var age = $("input[name='age']").val();
+
+	if(selectedTr == null){//如果是添加操作
+		//添加一行
+		$("#personTable").append($("<tr><td>"+name+"</td><td class='center'>"+sex+"</td><td class='right'>"+age+"</td><td class='center'></td></tr>"));
+		//获取最后一行最后一个td
+		var lastTd = $("#personTable tr td").last();
+		console.log(lastTd);
+		//创建修改按钮
+		var chgButton = $("<button  class='button2'>修改</button>");
+		
+		//创建删除按钮
+		var delButton = $("<button  class='button2'>删除</button>");
+		//将修改、删除按钮追加到最后一个td,也就是最后一个单元格
+		lastTd.append(chgButton).append(delButton);
+		//为修改按钮添加点击事件
+		chgButton.click(function(){
+			$("#dialog caption").text("修改学员信息");//修改标题
+			$("#dialog").css("visibility","visible");//显示对话框
+			selectedTr = $(this).parent().parent();//获取当前修改按钮所在的行(tr)
+			var tds = selectedTr.children();//获取其下面的所有单元格(td)
+			//以下三行将相应单元格的数据设置到文本输入框、或选中相应的单选按钮
+			$("input[name='name']").val(tds.eq(0).text());
+			$("input[name='sex'][value=\'"+tds.eq(1).text()+"\']").attr("checked","checked");
+			$("input[name='age']").val(tds.eq(2).text());
+		});
+		delButton.click(function(){
+			//删除所在行
+			console.log($(this).parent().parent().remove());
+			altTableRowBgColor();
+		});
+	}else{//如果是修改
+		//获取所在行所有的td
+		var tds = selectedTr.children();
+		tds.eq(0).text(name)
+		tds.eq(1).text(sex)
+		tds.eq(2).text(age)
+	}
+	//隐藏对话框
+	$("#dialog").css("visibility","hidden");
+	//清空在修改时所选行的变量
+	selectedTr = null;
+	altTableRowBgColor();
+  });
+
+});
+</script>
+
+</head>
+
+<body>
+<table id="dialog">
+  <caption>人员信息</caption>
+  <tr>
+    <td>姓名</td>
+    <td><input type="text" name="name" value="Tom"/></td>
+  </tr>
+  <tr>
+    <td>性别</td>
+    <td>
+	男<input name="sex" type="radio" value="男" checked="checked" />
+	女<input name="sex" type="radio"  value="女" />	</td>
+  </tr>
+  <tr>
+    <td>年龄</td>
+    <td><input name="age" type="text" value="28" size="5" /></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><button id="okButton" class="button2">确定</button></td>
+  </tr>
+</table>
+
+<table id="personTable" style="float:left">
+  <caption>学员列表</caption>
+  <tr>
+    <th width="48">姓名</th>
+    <th width="34">性别</th>
+    <th width="34">年龄</th>
+    <th width="109"><button id="addButton" class="button1">添加</button></th>
+  </tr>
+</table>
+<p>&nbsp;</p>
+</body>
+</html>
