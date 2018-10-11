@@ -7,12 +7,15 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-
+/*
+ * 此类为框架的运行做一些初始化设置。
+ * */
 @WebListener
 public class InitApp implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
+		//注册属性编辑器，供类型转换使用
 		registerPropertyEditor();
 	}
 

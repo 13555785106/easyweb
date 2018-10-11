@@ -1,0 +1,26 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>insertAdjacentHTML插入新内容</title>
+<script>
+	function addsome() {
+		document.all.paral.insertAdjacentHTML("afterBegin",
+				"<h1> 在文本前容器内插入内容 afterBegin</h1>");
+		document.all.paral.insertAdjacentHTML("beforeEnd",
+				"<h2> 在文本后容器内插入内容 beforeEnd</h2>");
+		document.all.paral.insertAdjacentHTML("beforeBegin",
+				"<h3> 在文本前容器外插入内容 beforeBegin</h3>");
+		document.all.paral.insertAdjacentHTML("afterEnd",
+				"<h4> 在文本后容器外插入内容 afterEnd</h4>");
+		console.log(document);
+	} 
+</script>
+</head>
+<body onload="addsome()">
+	<hr>
+	<div id="paral" style="fontsize: 6px; color: #ff00ff">原来的内容</div>
+	<hr>
+</body>
+</html>
+   
+

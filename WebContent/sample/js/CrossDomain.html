@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>JS跨域访问测试</title>
+<script src="../../theme/js/jquery.js"></script>
+<!-- 
+此页面可以放在任何Web应用下，但是注意要引入jquery库。
+如果访问的是其它计算机，注意修改其访问的Web服务器地址。
+同时访问的Servlet要添加头 "Access-Control-Allow-Origin",值为 "*"。
+response.addHeader("Access-Control-Allow-Origin", "*");
+ -->
+<script>
+
+
+$(document).ready(function(){
+	
+  $("#sendButton").click(function(){
+	  $.ajax({
+          type: "POST",
+          crossDomain: true,
+          url: "http://localhost:9090/WebSample/sample/js/CrossDomain",
+          data:{name:'肖俊峰',age:45},
+          dataType: "json",
+          success: function(msg) {
+        	  console.log(msg);
+        	  $("#msg").text(JSON.stringify(msg));
+          },
+          error: function(req,msg, e) {
+        	  console.log(msg);
+          }
+      });
+	
+  });
+
+});
+</script>
+
+</head>
+
+<body>
+<p id="msg"></p>
+<button id="sendButton">发送</button>
+</body>
+</html>

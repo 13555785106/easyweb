@@ -9,9 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.sample.db.model.User;
-
 
 //@WebFilter(filterName = "AuthenticateIdentityFilter", urlPatterns = "/sample/*")
 public class AuthenticateIdentityFilter implements Filter {
@@ -30,7 +28,6 @@ public class AuthenticateIdentityFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig fConfig) throws ServletException {
-
 	}
 
 	@Override

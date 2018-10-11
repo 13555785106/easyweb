@@ -2,7 +2,9 @@ package com.easyweb.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/*
+ * 本类用来分页
+ * */
 public class Paging<T> {
 	private int pageNo = -1;
 	private int pageSize;
