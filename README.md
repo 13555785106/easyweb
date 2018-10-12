@@ -1,6 +1,6 @@
 # EasyWeb Framework简介  
 在使用JSP/Servlet编写代码的过程中，表单数据到Bean的转换并验证是个繁琐无聊的过程。  
-使用EasyWeb框架，可以轻松地将表单数据转换成Bean，并完成数据的校验数据的校验。
+使用EasyWeb框架，可以轻松地将表单数据转换成Bean，并完成数据的校验。
 
 **运行环境**  
 在jdk1.8、Tomcat 7.0上测试通过。
