@@ -40,6 +40,7 @@ public class DownloadFile extends EasyHttpServlet {
 			hrr.getResponse().setContentLength((int) doc.getFileSize());
 			String fileName = doc.getFileName();
 			String contentType = MimeType.getInstance().getMimeByFileName(fileName);
+			
 			if (contentType == null)
 				contentType = "application/octet-stream";
 			String charset = hrr.getResponse().getCharacterEncoding();
