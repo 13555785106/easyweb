@@ -28,81 +28,124 @@ body {
 <body>
 	<div id="container"></div>
 	<script type="text/javascript">
-	//创建地图实例
-	var map = new BMap.Map("container");
-	//添加预定义控件
-	map.addControl(new BMap.NavigationControl({type : BMAP_NAVIGATION_CONTROL_LARGE}));
-	map.addControl(new BMap.ScaleControl({anchor : BMAP_ANCHOR_TOP_RIGHT}));
-	map.addControl(new BMap.OverviewMapControl());
-	map.addControl(new BMap.MapTypeControl());
+		//创建地图实例
+		var map = new BMap.Map("container");
+		//添加预定义控件
+		map.addControl(new BMap.NavigationControl({
+			type : BMAP_NAVIGATION_CONTROL_LARGE
+		}));
+		map.addControl(new BMap.ScaleControl({
+			anchor : BMAP_ANCHOR_TOP_RIGHT
+		}));
+		map.addControl(new BMap.OverviewMapControl());
+		map.addControl(new BMap.MapTypeControl());
 
-	//以下创建自定义控件
-	function ZoomControl(enlarge,reduce) {
-		this.enlarge=enlarge;
-		this.reduce =reduce;
-		this.defaultAnchor = BMAP_ANCHOR_TOP_LEFT;
-		this.defaultOffset = new BMap.Size(120, 30);
-	}
-	ZoomControl.prototype = new BMap.Control();
-	ZoomControl.prototype.initialize = function(map) {
-		var div = document.createElement("DIV");
-		div.style.backgroundColor='lightgrey';
-		var btnEnlarge = document.createElement("BUTTON");
-		btnEnlarge.appendChild(document.createTextNode("放大"));
-		btnEnlarge.style.margin="1px 5px";
-		btnEnlarge.onclick=this.enlarge;
-		div.appendChild(btnEnlarge);
-		var btnReduce = document.createElement("BUTTON");
-		btnReduce.appendChild(document.createTextNode("缩小")); 
-		btnReduce.style.margin="1px 5px";
-		btnReduce.onclick=this.reduce;
-		div.appendChild(btnReduce);		
-		map.getContainer().appendChild(div);
-		return div;
-	}
-	var myZoomCtrl = new ZoomControl(
-		function(e) {
+		//以下创建自定义控件
+		function ZoomControl(enlarge, reduce) {
+			this.enlarge = enlarge;
+			this.reduce = reduce;
+			this.defaultAnchor = BMAP_ANCHOR_TOP_LEFT;
+			this.defaultOffset = new BMap.Size(120, 30);
+		}
+		ZoomControl.prototype = new BMap.Control();
+		ZoomControl.prototype.initialize = function(map) {
+			var div = document.createElement("DIV");
+			div.style.backgroundColor = 'lightgrey';
+			var btnEnlarge = document.createElement("BUTTON");
+			btnEnlarge.appendChild(document.createTextNode("放大"));
+			btnEnlarge.style.margin = "1px 5px";
+			btnEnlarge.onclick = this.enlarge;
+			div.appendChild(btnEnlarge);
+			var btnReduce = document.createElement("BUTTON");
+			btnReduce.appendChild(document.createTextNode("缩小"));
+			btnReduce.style.margin = "1px 5px";
+			btnReduce.onclick = this.reduce;
+			div.appendChild(btnReduce);
+
+			var btnAddMarker = document.createElement("BUTTON");
+			btnAddMarker.appendChild(document.createTextNode("添加标记"));
+			btnAddMarker.style.margin = "1px 5px";
+			btnAddMarker.onclick = function() {
+				//创建标记
+				var marker = new BMap.Marker(new BMap.Point(123.402104,41.799181));
+				//标记可拖动
+				marker.enableDragging();
+				//拖动结束，显示信息框
+				marker.addEventListener("dragend", function(e) {
+					var opts = {
+						width : 280, // 信息窗口宽度    
+						height : 60, // 信息窗口高度    
+						title : "坐标" // 信息窗口标题   
+					}
+					var infoWindow = new BMap.InfoWindow("当前位置：" + e.point.lng + ", " + e.point.lat, opts); // 创建信息窗口对象    
+					map.openInfoWindow(infoWindow, e.point);
+				})
+				map.addOverlay(marker);
+
+				//添加带图标的标记
+				var icon = new BMap.Icon("../../images/lion.png",new BMap.Size(128, 128));
+				var iconMarker = new BMap.Marker(new BMap.Point(123.479691,41.857233), {icon : icon}); // 创建标注
+				map.addOverlay(iconMarker);
+			};
+			div.appendChild(btnAddMarker);
+
+			var btnAddPolygon = document.createElement("BUTTON");
+			btnAddPolygon.appendChild(document.createTextNode("添加多边形"));
+			btnAddPolygon.style.margin = "1px 5px";
+			btnAddPolygon.onclick = function() {
+				var polygon = new BMap.Polygon([
+						new BMap.Point(123.433437, 41.880869),
+						new BMap.Point(123.494953, 41.876572),
+						new BMap.Point(123.487479, 41.855084),
+						new BMap.Point(123.460458, 41.844337),
+						new BMap.Point(123.415615, 41.850356) ], {
+					strokeColor : "blue",
+					strokeWeight : 2,
+					strokeOpacity : 0.5
+				}); //创建多边形
+				polygon.addEventListener("click", function(event) {
+					console.log(event);
+				});
+				map.addOverlay(polygon); //增加多边形
+			};
+			div.appendChild(btnAddPolygon);
+
+			var btnClear = document.createElement("BUTTON");
+			btnClear.appendChild(document.createTextNode("清除"));
+			btnClear.style.margin = "1px 5px";
+			btnClear.onclick = function() {
+				var overlays = map.getOverlays();
+				for ( var index in overlays) {
+					map.removeOverlay(overlays[index]);
+					//if(overlays[index] instanceof BMap.Polygon){
+					//	console.log(overlays[index]);
+					//}
+				}
+			};
+			div.appendChild(btnClear);
+
+			map.getContainer().appendChild(div);
+			return div;
+		}
+		var myZoomCtrl = new ZoomControl(function(e) {
 			map.zoomTo(map.getZoom() + 1);
-		},
-		function(e) {
+		}, function(e) {
 			map.zoomTo(map.getZoom() - 1);
-		}
-	);
-	console.log(myZoomCtrl);
-	map.addControl(myZoomCtrl);
-	
-	
-	//设置地图中心点及放大倍数
-	map.centerAndZoom(new BMap.Point(123.402104, 41.799181), 12);
-	//map.centerAndZoom("沈阳", 12);
-	//设置滑轮滚动
-	map.enableScrollWheelZoom(true);
-	
-	//为地图添加点击事件，点击之后在控制台输出坐标
-	map.addEventListener("click", function(e) {
-		console.log(map);
-		console.log(e.point.lng + ", " + e.point.lat);
-	});
-	//创建标记
-	var marker = new BMap.Marker(new BMap.Point(123.402104, 41.799181));
-	//标记可拖动
-	marker.enableDragging();
-	//拖动结束，显示信息框
-	marker.addEventListener("dragend", function(e) {
-		var opts = {
-			width : 280, // 信息窗口宽度    
-			height : 60, // 信息窗口高度    
-			title : "坐标" // 信息窗口标题   
-		}
-		var infoWindow = new BMap.InfoWindow("当前位置：" + e.point.lng + ", " + e.point.lat, opts); // 创建信息窗口对象    
-		map.openInfoWindow(infoWindow, e.point);
-	})
-	map.addOverlay(marker);
-	
-	//添加带图标的标记
-	var icon = new BMap.Icon("../../images/lion.png", new BMap.Size(128,128));
-	var iconMarker = new BMap.Marker(new BMap.Point(123.479691, 41.857233),{icon:icon});  // 创建标注
-	map.addOverlay(iconMarker); 		
+		});
+		console.log(myZoomCtrl);
+		map.addControl(myZoomCtrl);
+
+		//设置地图中心点及放大倍数
+		map.centerAndZoom(new BMap.Point(123.402104, 41.799181), 12);
+		//map.centerAndZoom("沈阳", 12);
+		//设置滑轮滚动
+		map.enableScrollWheelZoom(true);
+
+		//为地图添加点击事件，点击之后在控制台输出坐标
+		map.addEventListener("click", function(e) {
+			//console.log(map);
+			console.log(e.point.lng + ", " + e.point.lat);
+		});
 	</script>
 </body>
 </html>
