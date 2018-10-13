@@ -21,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class EasyHttpServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private String viewPath = "/WEB-INF/jsp";
-	private String viewBaseName = viewPath + "/" + this.getClass().getName().replace('.', '/');
+	private String viewBasePath = "/WEB-INF/jsp";
+	private String viewBaseName = viewBasePath + "/" + this.getClass().getName().replace('.', '/');
 	private String contentType = "text/html";
 	private String charSet = "UTF-8";
 	private Map<String, String> messagesMap = new HashMap<String, String>(Messages.getInstance().getMessages());
@@ -47,12 +47,12 @@ public class EasyHttpServlet extends HttpServlet {
 		}
 	}
 
-	public String getViewPath() {
-		return viewPath;
+	public String getViewBasePath() {
+		return viewBasePath;
 	}
 
-	public void setViewPath(String viewPath) {
-		this.viewPath = viewPath;
+	public void setViewBasePath(String viewPath) {
+		this.viewBasePath = viewPath;
 	}
 
 	protected String getViewBaseName() {

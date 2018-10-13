@@ -19,6 +19,9 @@ ul li {
 	padding: 0px;
 	margin: 0px;
 }
+dl{
+margin:0px;
+}
 </style>
 </head>
 <body>
@@ -38,21 +41,25 @@ ul li {
 						<th>JSP/Servlet示例</th>
 					</tr>
 					<tr>
-						<td><ul>
-								<li><a href="sample/ex01/ListUser" target="_blank">用户列表</a></li>
-							</ul>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;不使用EasyWeb框架直接使用JSP与Servlet完成数据的添加、修改、删除及查询。</td>
+						<td><dl>
+								<dt>
+									<a href="sample/ex01/ListUser" target="_blank">用户列表</a>
+								</dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;不使用EasyWeb框架直接使用JSP与Servlet完成数据的添加、修改、删除及查询。</dd>
+							</dl></td>
 					</tr>
 					<tr>
 						<th>EasyWeb表单</th>
 					</tr>
 					<tr>
 						<td>
-							<ul>
-								<li><a href="sample/ex02/ListUser" target="_blank">用户列表</a></li>
-								<li><a href="sample/ex02/TurningPage" target="_blank">分页与翻页</a></li>
-							</ul>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用EasyWeb框架完成数据的添加、修改、删除、查询、分页。
+							<dl>
+								<dt><a href="sample/ex02/ListUser" target="_blank">用户列表</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用EasyWeb框架完成数据的添加、修改、删除、查询、分页。</dd>
+								<dt><a href="sample/ex02/TurningPage" target="_blank">分页与翻页</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用Paging类实现分页和翻页。</dd>
+							</dl>
+							
 						</td>
 					</tr>
 					<tr>
@@ -60,53 +67,83 @@ ul li {
 					</tr>
 					<tr>
 						<td>
-							<ul>
-								<li><a href="sample/html5ajax/AjaxAndJson.html"
-									target="_blank">用户列表</a></li>
-								<li><a href="sample/html5ajax/ProgressBar.html"
-									target="_blank">大文件上传与处理的进度条显示</a></li>
-							</ul>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用EasyWeb框架及AJAX完成数据的添加、修改、删除、查询、分页。
+							<dl>
+								<dt><a href="sample/html5ajax/AjaxAndJson.html"
+									target="_blank">用户列表</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用EasyWeb框架及AJAX完成数据的添加、修改、删除、查询、分页。</dd>
+								<dt><a href="sample/html5ajax/ProgressBar.html"
+									target="_blank">大文件上传与处理的进度条显示</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如何执行长时间执行的任务，并在页面显示进度。</dd>
+							</dl>
+							
 						</td>
 					</tr>
 					<tr>
 						<th>EasyWeb 文件上传与下载</th>
 					</tr>
 					<tr>
-						<td><ul>
-								<li><a href="sample/updownload/ListFile" target="_blank">文件列表</a></li>
-							</ul>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用EasyWeb框架上传、下载文件。</td>
+						<td><dl>
+								<dt><a href="sample/updownload/ListFile" target="_blank">文件列表</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用EasyWeb框架上传、下载文件。</dd>
+							</dl>
+							</td>
 					</tr>
 					<tr>
 						<th>GET方式中文传递</th>
 					</tr>
 					<tr>
-						<td><ul>
-								<li><a href="sample/getutf8/UTF8Parameter.jsp"
-									target="_blank">传递中文</a></li>
-							</ul>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如何使用GET方式传递及接收中文参数。
+						<td><dl>
+								<dt><a href="sample/getutf8/UTF8Parameter.jsp"
+									target="_blank">传递中文</a></dt>
+									<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如何使用GET方式传递及接收中文参数。</dd>
+							</dl>
+							
 						</td>
 					</tr>
 					<tr>
 						<th>RESTFul风格的URL</th>
 					</tr>
 					<tr>
-						<td><ul>
-								<li><a href="sample/restful/ParamSegments/1/2/3"
-									target="_blank">URL作为参数</a></li>
-							</ul>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在EasyWeb框架中使用RESTFul风格的URL。
-							</td>
+						<td><dl>
+								<dt><a href="sample/restful/ParamSegments/1/2/3"
+									target="_blank">URL作为参数</a></dt>
+									<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在EasyWeb框架中使用RESTFul风格的URL。</dd>
+							</dl>
+							
+						</td>
 					</tr>
 					<tr>
 						<th>分权分域的基本实现</th>
 					</tr>
 					<tr>
-						<td><ul>
-								<li><a href="Login" target="_blank">登录演示系统</a></li>
-							</ul> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Web系统中分权分域的基本实现方式。
+						<td><dl>
+								<dt><a href="Login" target="_blank">登录演示系统</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Web系统中分权分域的基本实现方式。</dd>
+							</dl>
+							
+						</td>
+					</tr>
+					<tr>
+						<th>其它</th>
+					</tr>
+					<tr>
+						<td>
+							<dl>
+								<dt><a href="sample/js/BarChart" target="_blank">条形图</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;演示从Servlet向JSP视图中的JavaScript传递数据。</dd>
+							</dl>
+							<dl>
+								<dt><a href="sample/js/CityMap" target="_blank">沈阳市城区分布图</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同上。</dd>
+							</dl>
+							<dl>
+								<dt><a href="sample/js/ProvinceMap" target="_blank">辽宁省地区分布图</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同上。</dd>
+							</dl>	
+							<dl>
+								<dt><a href="sample/js/BaiduMap.html" target="_blank">百度地图</a></dt>
+								<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如何在网页中使用百度地图。</dd>
+							</dl>														
 						</td>
 					</tr>
 				</table>

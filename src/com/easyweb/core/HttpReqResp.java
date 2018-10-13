@@ -38,12 +38,15 @@ public class HttpReqResp {
 		this.messagesMap = messagesMap;
 		this.viewBaseName = viewBaseName;
 	}
-	public void setAttribute(String name,Object val) {
+
+	public void setAttribute(String name, Object val) {
 		request.setAttribute(name, val);
 	}
+
 	public Object getAttribute(String name) {
 		return request.getAttribute(name);
 	}
+
 	// 便于forward
 	public void forward(String path) throws ServletException, IOException {
 		request.getRequestDispatcher(path).forward(request, response);
@@ -59,7 +62,7 @@ public class HttpReqResp {
 	}
 
 	public void includeByViewName(String viewName) throws ServletException, IOException {
-		System.out.println(viewBaseName + "-" + viewName);
+		//System.out.println(viewBaseName + "-" + viewName);
 		request.getRequestDispatcher(viewBaseName + "-" + viewName).include(request, response);
 	}
 
@@ -135,8 +138,13 @@ public class HttpReqResp {
 		return msg;
 	}
 
+	// 当前应用内进行重定向,会在location之前加上应用的contextPath
+	public void sendRedirectInContextPath(String location) throws IOException {
+		response.sendRedirect(request.getContextPath() + location);
+	}
+
 	/*
-	 * 对请求参数进行转换并校验
+	 * 对请求参数进行转换并校验。 表单数据转换及校验流程：FormData->Map<String,String>->Bean->校验
 	 */
 	public <T> T convertAndValidate(Class<T> clazz) {
 		T t = null;
@@ -151,7 +159,7 @@ public class HttpReqResp {
 		} catch (IntrospectionException e) {
 			e.printStackTrace();
 		}
-		
+
 		if (beanInfo != null && t != null) {
 			Map<String, PropertyDescriptor> pdMap = new HashMap<String, PropertyDescriptor>();
 			for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
@@ -169,7 +177,7 @@ public class HttpReqResp {
 					editor.setAsText(propValue);
 					propertyDescriptor.getWriteMethod().invoke(t, editor.getValue());
 				} catch (Exception e) {
-					//e.printStackTrace();
+					// e.printStackTrace();
 					if (!propValue.trim().isEmpty() && propType != null) {
 						addParamError(propName, getConversionErrorMessage(propName, propType));
 					}

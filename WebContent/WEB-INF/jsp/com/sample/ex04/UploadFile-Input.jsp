@@ -20,6 +20,11 @@
 						<br />
 					</c:forEach></td>
 			</tr>
+			<!-- 
+			一个文件域在转化成bean属性的过程中，被设置到两个属性中。
+			"文件域名字"+"Name"属性存放文件的名称；
+			"文件域名字"+"Size"属性存放文件的大小，单位字节。
+			 -->
 			<tr>
 				<td>png文件：</td>
 				<td><input type="file" name="file"></td>
