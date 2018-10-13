@@ -62,7 +62,7 @@ public class HttpReqResp {
 	}
 
 	public void includeByViewName(String viewName) throws ServletException, IOException {
-		//System.out.println(viewBaseName + "-" + viewName);
+		// System.out.println(viewBaseName + "-" + viewName);
 		request.getRequestDispatcher(viewBaseName + "-" + viewName).include(request, response);
 	}
 
@@ -128,13 +128,13 @@ public class HttpReqResp {
 	}
 
 	protected String getConversionErrorMessage(String key, Class<?> type) {
-		String msg = messagesMap.get("error.conversion.datatype." + type.getName());
+		String msg = messagesMap.get(Messages.KEY_ERROR_CONVERSION_DATATYPE + "." + type.getName());
 
 		if (msg == null)
-			msg = messagesMap.get("error.conversion." + key);
+			msg = messagesMap.get(Messages.KEY_ERROR_CONVERSION + "." + key);
 
 		if (msg == null)
-			msg = messagesMap.get("error.conversion.common");
+			msg = messagesMap.get(Messages.KEY_ERROR_CONVERSION_COMMON);
 		return msg;
 	}
 

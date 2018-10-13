@@ -70,8 +70,9 @@
 							</c:forEach>	
 							</td>
 							<td class="text-center"><a href="ChgUser?id=${user.id}"
-								class="btn btn-primary btn-xs" role="button">修改</a> <a
-								href="DelUser/${user.id}" class="btn btn-primary btn-xs"
+								class="btn btn-primary btn-xs" role="button">修改</a>
+								<a href="DelUser/${user.id}" class="btn btn-primary btn-xs"
+								onclick="return confirm('确实要删除用户 ${user.account} 吗?');"
 								role="button">删除</a></td>
 						</tr>
 					</c:forEach>

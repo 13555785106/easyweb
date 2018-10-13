@@ -15,7 +15,12 @@ import java.util.Properties;
  * @since 1.0
  * @version 1.0
  */
-public class Messages {
+public final class Messages {
+	public final static String KEY_ERROR_CONVERSION="error.conversion";
+	public final static String KEY_ERROR_CONVERSION_DATATYPE=KEY_ERROR_CONVERSION+".datatype";
+	public final static String KEY_ERROR_CONVERSION_COMMON=KEY_ERROR_CONVERSION+".common";
+	
+	
 	private static Messages instance = null;
 	private Properties properties = new Properties();
 
