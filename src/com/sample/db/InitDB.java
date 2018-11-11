@@ -1,9 +1,11 @@
 package com.sample.db;
 
 import java.sql.SQLException;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+
 import org.apache.commons.dbcp2.BasicDataSource;
 /*
  * 设置DB类的数据源

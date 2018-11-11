@@ -12,6 +12,7 @@
 <title>BAR</title>
 </head>
 <body>
+
 	<h2 style="text-align:center;">条形图</h2>
 	<div id="container" style="height: 400px">
 	</div>

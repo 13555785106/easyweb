@@ -1,6 +1,7 @@
 package com.sample.filter;
 
 import java.io.IOException;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -9,6 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.sample.db.model.User;
 
 //@WebFilter(filterName = "AuthenticateIdentityFilter", urlPatterns = "/sample/*")

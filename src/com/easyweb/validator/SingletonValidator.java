@@ -3,9 +3,11 @@ package com.easyweb.validator;
 import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.stream.Collectors;
+
 import javax.validation.Configuration;
 import javax.validation.Validation;
 import javax.validation.Validator;
+
 import com.easyweb.lang.ClassUtils;
 
 /**

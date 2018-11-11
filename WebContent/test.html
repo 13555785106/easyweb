@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JavaScript Promise</title>
+</head>
+<body>
+	<script>
+	function Pro1(){
+		 return new Promise(function(resolve, reject) {
+		  setTimeout(function(){
+		   resolve('pro1')
+		  }, 3000)
+		 })
+		}
+		function Pro2(){
+		 return new Promise(function(resolve, reject) {
+		  setTimeout(function(){
+		   resolve('pro2')
+		  }, 300)
+		 })
+		}
+		//调用
+		var Pro = Promise.all([Pro1(), Pro2()]);
+		Pro.then(function(data){
+		 console.log(data[0], data[1]) //Pro1 Pro2
+		}).catch(function(err){
+		 throw new Error(err)
+		})
+	</script>
+</body>
+</html>

@@ -1,10 +1,10 @@
 package com.sample.db;
 
-import org.apache.commons.dbutils.QueryRunner;
-
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
+
+import org.apache.commons.dbutils.QueryRunner;
 /*
  * 此类用来访问数据库，设计为单例模式。
  * 利用Apache Commons DBUtils组件来访问数据库。
