@@ -32,10 +32,12 @@ public class UploadFile extends EasyHttpServlet {
 		if (doc != null && !hrr.hasErrors()) {
 			doc.setDateTime(new Timestamp(new java.util.Date().getTime()));
 			doc.setPath("/files/"+UUID.randomUUID().toString()+"." +FilenameUtils.getExtension(doc.getFileName()));
+			System.out.println(getServletContext().getRealPath(doc.getPath()));
 			hrr.getRequest().getPart("file").write(getServletContext().getRealPath(doc.getPath()));
 			hrr.setReqResult(doc);
 			DocDac.getInstance().addDoc(doc);
 			if(doc.getId()>0) {
+				System.out.println(doc);
 				hrr.forwardByViewName("Result.jsp");
 				return;
 			}else {
