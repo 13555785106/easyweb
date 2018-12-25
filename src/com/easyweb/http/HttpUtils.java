@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.easyweb.utils.CodecUtils;
-
 /**
  * 此类主要封装了一个用来发送HTTP请求的函数,支持GET或POST方法，也支持文件的上传。 发送文件时，如果提供了回调，可监控文件上传的进度。
  * 对于远程服务器的回应，本函数提供了回调可由用户决定如何处理这些数据。 肖俊峰 2018-9-15
@@ -215,15 +212,9 @@ public final class HttpUtils {
 						for (Map.Entry<String, List<File>> entry : fileFields.entrySet()) {
 							String key = entry.getKey();
 							for (File file : entry.getValue()) {
-								String fileName = file.getName();
-								
-								System.out.println(fileName);
 								dos.writeBytes("--" + boundary + "\r\n");
-								System.out.println("Content-Disposition: form-data; name=\"" + key + "\"; filename=\""
-										+ fileName + "\"\r\n");
-								dos.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"; filename=\""
-										);
-								dos.write(fileName.getBytes(charsetName));
+								dos.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"");
+								dos.write(file.getName().getBytes(charsetName));
 								dos.writeBytes("\"\r\n");
 								dos.writeBytes("Content-Type: application/octet-stream" + "\r\n\r\n");
 								int count = 0;
