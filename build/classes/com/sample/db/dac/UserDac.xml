@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment />
+	<!-- This is a comment -->
+	<entry key="allUsers">
+<![CDATA[
+SELECT * 
+FROM 
+users
+ORDER BY account
+]]>
+	</entry>
+	<entry key="getUser">
+<![CDATA[
+SELECT * 
+FROM 
+users
+WHERE id = ?
+]]>
+	</entry>
+	<entry key="addUser">
+<![CDATA[
+INSERT INTO USERS
+(account,passwd,sex,salary,birthday,hobbies,authorities) VALUES(?,?,?,?,?,?,?)
+]]>
+	</entry>
+	<entry key="chgUser">
+<![CDATA[
+UPDATE USERS SET
+account=?,
+passwd=?,
+sex=?,
+salary=?,
+birthday=?,
+hobbies=?, 
+authorities=?
+WHERE id=?
+]]>
+	</entry>
+	<entry key="delUser">
+<![CDATA[
+DELETE FROM USERS 
+WHERE id=?
+]]>
+	</entry>
+	<entry key="login">
+<![CDATA[
+SELECT * FROM USERS 
+WHERE account=? AND passwd=?
+]]>
+	</entry>
+	<entry key="accountExist">
+<![CDATA[
+SELECT count(*) FROM USERS 
+WHERE account=?
+]]>
+	</entry>
+	<entry key="accountExist2">
+<![CDATA[
+SELECT count(*) FROM USERS 
+WHERE id <> ? AND account=?
+]]>
+	</entry>
+</properties>
