@@ -1,6 +1,8 @@
 package com.sample.filter;
 
 import java.io.IOException;
+import java.util.Enumeration;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -9,23 +11,26 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.sample.db.model.User;
-
-//@WebFilter(filterName = "AuthenticateIdentityFilter", urlPatterns = "/sample/*")
-public class AuthenticateIdentityFilter implements Filter {
+@WebFilter(filterName = "LogFilter", urlPatterns = "/*")
+public class LogFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-		User user = (User) httpServletRequest.getSession().getAttribute("curUser");
-		if (user != null)
-			chain.doFilter(request, response);
-		else {
-			((HttpServletResponse) response).sendRedirect(httpServletRequest.getContextPath() + "/Login");
+		Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+		System.out.println("--------------------------------------------------");
+		System.out.println(httpServletRequest.getServletPath());
+		while (headerNames.hasMoreElements()) {
+			String headerName = headerNames.nextElement();
+			System.out.println(headerName);
+			Enumeration<String> headerValues = httpServletRequest.getHeaders(headerName);
+			while (headerValues.hasMoreElements()) {
+				System.out.println("    " + headerValues.nextElement());
+			}
 		}
+		chain.doFilter(request, response);
 	}
 
 	@Override

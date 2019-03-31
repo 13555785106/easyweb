@@ -15,11 +15,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.security.KeyManagementException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+
 /**
  * 此类主要封装了一个用来发送HTTP请求的函数,支持GET或POST方法，也支持文件的上传。 发送文件时，如果提供了回调，可监控文件上传的进度。
  * 对于远程服务器的回应，本函数提供了回调可由用户决定如何处理这些数据。 肖俊峰 2018-9-15
@@ -29,96 +36,111 @@ public final class HttpUtils {
 	public static final String METHOD_POST = "POST";
 	static {
 		CookieHandler.setDefault(new CookieManager());
+		HttpsURLConnection.setDefaultHostnameVerifier(new javax.net.ssl.HostnameVerifier() {
+			public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
+				System.out.println(hostname);
+				for(String vn : sslSession.getValueNames()) {
+					System.out.println(vn);
+					System.out.println(sslSession.getValue(vn));
+				}
+				return true;
+			}
+		});
 	}
 
 	private HttpUtils() {
 	}
 
-	/**
-	 * 以 UTF-8编码向远程的Web服务器发送POST请求， 返回的数据是 UTF-8 编码的字符串。
-	 * 
-	 * @param urlSpec    请求地址。
-	 * @param textFields 文本域参数。
-	 * @return 返回UTF-8 编码的字符串。
-	 */
-
-	public static String utf8PostRequest(String urlSpec, Map<String, List<String>> textFields) {
-		return sendUtf8Request(METHOD_POST, urlSpec, textFields);
+	public static byte[] getBytes(String urlSpec) {
+		return sendUTF8Request("GET", urlSpec, null);
 	}
 
-	/**
-	 * 以 UTF-8编码向远程的Web服务器发送GET请求， 返回的数据是 UTF-8 编码的字符串。
-	 * 
-	 * @param urlSpec    请求地址。
-	 * @param textFields 文本域参数。
-	 * @return 返回 UTF-8 编码的字符串。
-	 */
-	public static String utf8GetRequest(String urlSpec, Map<String, List<String>> textFields) {
-		return sendUtf8Request(METHOD_GET, urlSpec, textFields);
+	public static String getUTF8String(String urlSpec) {
+		return fetchUTF8String("GET", urlSpec, null);
 	}
 
-	/**
-	 * 这个方法用来向远程的Web服务器以 UTF-8 发送GET或者POST请求，只能发送文本域参数，不包含文件域。 返回 UTF-8 编码的字符串。
-	 * 
-	 * @param method     请求方法，必须为 GET 或者 POST。
-	 * @param urlSpec    请求地址。
-	 * @param textFields 文本域参数。
-	 * @return 返回值是UTF-8 编码转换成的字符串。
-	 */
-	public static String sendUtf8Request(String method, String urlSpec, Map<String, List<String>> textFields) {
-		return sendRequest(method, urlSpec, textFields, "UTF-8");
+	public static String fetchSingleValuedUTF8String(String method, String urlSpec, Map<String, String> textFields) {
+		return fetchUTF8String(method, urlSpec, httpParameterSingleValue2MultiValue(textFields));
 	}
 
-	/**
-	 * 这个方法用来向远程的Web服务器以指定编码charsetName发送GET或者POST请求，只能发送文本域参数，不包含文件域。 返回
-	 * charsetName 编码的字符串。
-	 * 
-	 * @param method     请求方法，必须为 GET 或者 POST。
-	 * @param urlSpec    请求地址。
-	 * @param textFields 文本域参数。
-	 * @return 返回值是UTF-8 编码转换成的字符串。
-	 */
-	public static String sendRequest(String method, String urlSpec, Map<String, List<String>> textFields,
-			String charsetName) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		sendRequest(method, urlSpec, textFields, charsetName, new HttpDownloadProgress() {
+	public static String fetchUTF8String(String method, String urlSpec, Map<String, List<String>> textFields) {
+		String result = null;
+		try {
+			result = new String(sendUTF8Request(method, urlSpec, textFields), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public static byte[] sendSingleValuedUTF8Request(String method, String urlSpec, Map<String, String> textFields) {
+		return sendUTF8Request(method, urlSpec, httpParameterSingleValue2MultiValue(textFields));
+	}
+
+	public static byte[] sendUTF8Request(String method, String urlSpec, Map<String, List<String>> textFields) {
+		return sendUTF8Request(method, urlSpec, textFields, null, null);
+	}
+
+	public static byte[] sendSingleValuedUTF8Request(String method, String urlSpec, Map<String, String> textFields,
+			Map<String, File> fileFields, HttpUploadProgress httpUploadProgress) {
+		return sendUTF8Request(method, urlSpec, httpParameterSingleValue2MultiValue(textFields),
+				httpParameterSingleValue2MultiValue(fileFields), httpUploadProgress);
+	}
+
+	public static byte[] sendUTF8Request(String method, String urlSpec, Map<String, List<String>> textFields,
+			Map<String, List<File>> fileFields, HttpUploadProgress httpUploadProgress) {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		sendRequest(method, urlSpec, textFields, fileFields, "UTF-8", httpUploadProgress, new HttpDownloadProgress() {
 			@Override
 			public void onStart(String fileName, int length) {
 			}
 
 			@Override
 			public void onProgress(byte[] bytes, int count) {
-				baos.write(bytes, 0, count);
+				if (baos != null)
+					baos.write(bytes, 0, count);
 			}
 
 			@Override
 			public void onFinish() {
 			}
 		});
-		String str = null;
-		try {
-			str = new String(baos.toByteArray(), charsetName);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return str;
+		return baos.toByteArray();
 	}
 
-	/**
-	 * 这个方法用来向远程的Web服务器发送GET或者POST请求。
-	 * 
-	 * @param method               请求方法，必须为 GET 或者 POST。
-	 * @param urlSpec              请求地址。
-	 * @param textFields           文本域参数。
-	 * @param charsetName          字符集名称,例如 UTF-8、ISO-8859-1等。
-	 * @param httpDownloadProgress 处理返回数据时的回调。
-	 * @throws IllegalArgumentException 设置了无效的方法时，或者其它参数不匹配.
-	 *
-	 * @throws IOException              读写数据时的各种IO错误。
-	 */
+	public static void sendUTF8Request(String method, String urlSpec, Map<String, List<String>> textFields,
+			Map<String, List<File>> fileFields, HttpUploadProgress httpUploadProgress,
+			HttpDownloadProgress httpDownloadProgress) {
+		sendRequest(method, urlSpec, textFields, fileFields, "UTF-8", httpUploadProgress, httpDownloadProgress);
+	}
+
+	public static void sendSingleValuedUTF8Request(String method, String urlSpec, Map<String, String> textFields,
+			Map<String, File> fileFields, HttpUploadProgress httpUploadProgress,
+			HttpDownloadProgress httpDownloadProgress) {
+		sendSingleValuedRequest(method, urlSpec, textFields, fileFields, "UTF-8", httpUploadProgress,
+				httpDownloadProgress);
+	}
+
 	public static void sendRequest(String method, String urlSpec, Map<String, List<String>> textFields,
-			String charsetName, HttpDownloadProgress httpDownloadProgress) {
-		sendRequest(method, urlSpec, textFields, null, 8192, false, charsetName, null, httpDownloadProgress);
+			Map<String, List<File>> fileFields, String charsetName, HttpUploadProgress httpUploadProgress,
+			HttpDownloadProgress httpDownloadProgress) {
+		sendRequest(method, urlSpec, textFields, fileFields, 8192, charsetName, httpUploadProgress,
+				httpDownloadProgress);
+	}
+
+	public static void sendSingleValuedRequest(String method, String urlSpec, Map<String, String> textFields,
+			Map<String, File> fileFields, String charsetName, HttpUploadProgress httpUploadProgress,
+			HttpDownloadProgress httpDownloadProgress) {
+		sendSingleValuedRequest(method, urlSpec, textFields, fileFields, 8192, charsetName, httpUploadProgress,
+				httpDownloadProgress);
+	}
+
+	public static void sendSingleValuedRequest(String method, String urlSpec, Map<String, String> textFields,
+			Map<String, File> fileFields, int bufferLength, String charsetName, HttpUploadProgress httpUploadProgress,
+			HttpDownloadProgress httpDownloadProgress) {
+		sendRequest(method, urlSpec, httpParameterSingleValue2MultiValue(textFields),
+				httpParameterSingleValue2MultiValue(fileFields), bufferLength, charsetName, httpUploadProgress,
+				httpDownloadProgress);
 	}
 
 	/**
@@ -139,9 +161,11 @@ public final class HttpUtils {
 	 * @throws IOException              读写数据时的各种IO错误。
 	 */
 	public static void sendRequest(String method, String urlSpec, Map<String, List<String>> textFields,
-			Map<String, List<File>> fileFields, int bufferLength, boolean isMultiPart, String charsetName,
+			Map<String, List<File>> fileFields, int bufferLength, String charsetName,
 			HttpUploadProgress httpUploadProgress, HttpDownloadProgress httpDownloadProgress) {
-
+		boolean isMultiPart = false;
+		if (fileFields != null && !fileFields.isEmpty())
+			isMultiPart = true;
 		if (method == null)
 			method = "";
 		method = method.toUpperCase();
@@ -177,6 +201,25 @@ public final class HttpUtils {
 			url = new URL(urlSpec);
 
 			httpURLConnection = (HttpURLConnection) url.openConnection();
+
+			httpURLConnection.setDoInput(true);
+			httpURLConnection.setUseCaches(false);
+			httpURLConnection.setRequestMethod(method.toUpperCase());
+			httpURLConnection.setRequestProperty("Charset", charsetName);
+			httpURLConnection.setRequestProperty("Connection", "Keep-Alive");// 维持长连接
+			if (url.getProtocol().equals("https")) {
+				try {
+					TrustManager[] tm = { new NonAuthenticationX509TrustManager() };
+					SSLContext sslContext = SSLContext.getInstance("SSL");
+					sslContext.init(null, tm, new java.security.SecureRandom());
+					SSLSocketFactory sf = sslContext.getSocketFactory();
+					((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(sf);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
 			if (method.equals(METHOD_GET)) {
 				httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			} else if (method.equals(METHOD_POST)) {
@@ -187,11 +230,6 @@ public final class HttpUtils {
 				} else
 					httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			}
-			httpURLConnection.setDoInput(true);
-			httpURLConnection.setUseCaches(false);
-			httpURLConnection.setRequestMethod(method.toUpperCase());
-			httpURLConnection.setRequestProperty("Charset", charsetName);
-			httpURLConnection.setRequestProperty("Connection", "Keep-Alive");// 维持长连接
 
 			if (method.equals(METHOD_POST)) {
 				DataOutputStream dos = new DataOutputStream(httpURLConnection.getOutputStream());
@@ -254,8 +292,6 @@ public final class HttpUtils {
 				dos.close();
 			}
 
-			httpURLConnection.connect();
-
 			if (httpURLConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
 				throw new IOException(httpURLConnection.getResponseMessage() + ": with " + urlSpec);
 			} else {
@@ -300,6 +336,18 @@ public final class HttpUtils {
 		}
 	}
 
+	private static <K, V> Map<K, List<V>> httpParameterSingleValue2MultiValue(Map<K, V> fields) {
+		if (fields == null)
+			return null;
+		Map<K, List<V>> map = new HashMap<K, List<V>>();
+		for (Map.Entry<K, V> entry : fields.entrySet()) {
+			List<V> list = new ArrayList<>();
+			list.add(entry.getValue());
+			map.put(entry.getKey(), list);
+		}
+		return map;
+	}
+
 	public static void main(String[] args) throws UnsupportedEncodingException {
 		// printCharSets();
 		// testUtf8Request();
@@ -322,19 +370,18 @@ public final class HttpUtils {
 		params.put("salary", Arrays.asList(new String[] { "4000" }));
 		params.put("hobbies", Arrays.asList(new String[] { "足球", "篮球", "排球" }));
 		// 通过GET方式发送请求
-		System.out.println(sendUtf8Request("GET", "http://localhost:9090/WebSample/sample/ex01/AddUser", params));
+		System.out.println(fetchUTF8String("GET", "http://localhost:9090/WebSample/sample/ex01/AddUser", params));
 		// 通过POST方式发送请求
-		System.out.println(sendUtf8Request("POST", "http://localhost:9090/WebSample/sample/ex01/AddUser", params));
+		System.out.println(fetchUTF8String("POST", "http://localhost:9090/WebSample/sample/ex01/AddUser", params));
 	}
 
 	public static void testSendRequest() {
 		Map<String, List<File>> files = new HashMap<String, List<File>>();
 		files.put("file", Arrays.asList(new File[] { new File("/Users/xiaojf/Desktop/img/红苹果.png") }));
 		// 上传一个文件
-		sendRequest("POST", "http://localhost:9090/WebSample/sample/updownload/UploadFile", null, files, 8192, true,
-				null, new HttpUploadProgress() {
+		sendRequest("POST", "https://127.0.0.1:9443/WebSample/sample/updownload/UploadFile", null, files, 8192, null,
+				new HttpUploadProgress() {
 					long fileSize = 0;
-
 					@Override
 					public void onStart(File file) {
 						fileSize = 0;
@@ -375,8 +422,8 @@ public final class HttpUtils {
 					}
 				});
 		// 下载一个文件
-		sendRequest("GET", "http://localhost:9090/WebSample/sample/updownload/DownloadFile?id=101", null, null, 0,
-				false, null, null, new HttpDownloadProgress() {
+		sendRequest("GET", "http://localhost:9090/WebSample/sample/updownload/DownloadFile?id=101", null, null, 0, null,
+				null, new HttpDownloadProgress() {
 					FileOutputStream fos = null;
 
 					@Override
